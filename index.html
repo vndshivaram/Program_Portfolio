@@ -81,6 +81,14 @@
   .contact-links a{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;padding:12px 20px;border:1px solid var(--line);color:var(--paper);transition:border-color .15s,color .15s;}
   .contact-links a:hover{border-color:var(--gold);color:var(--gold);}
   footer{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--muted-dark);margin-top:56px;}
+  .resume-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.82rem;
+    padding:12px 20px;border:1px solid var(--ink);color:var(--ink);
+    transition:background .15s,color .15s;
+  }
+  .resume-btn:hover{background:var(--ink);color:var(--paper);}
+  .resume-btn svg{width:14px;height:14px;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -109,6 +117,7 @@
       <div class="kicker" id="hero-kicker">Program governance / delivery leadership</div>
       <h1 class="hero-head" id="hero-headline">Loading…</h1>
       <p class="hero-sub" id="hero-sub"></p>
+      <div id="resume-btn-wrap" style="margin-bottom:32px;"></div>
       <div class="ledger" id="hero-ledger"></div>
     </section>
 
@@ -261,6 +270,16 @@
 
     document.getElementById('certs-container').innerHTML = (data.certifications||[]).map(e => `
       <div class="ed-item"><div class="ed-title">${esc(e.title)}</div><div class="ed-sub">${esc(e.sub)}</div></div>`).join('');
+
+    const resumeWrap = document.getElementById('resume-btn-wrap');
+    if (data.resumeDataUrl) {
+      resumeWrap.innerHTML = `<a class="resume-btn" href="${esc(data.resumeDataUrl)}" download="Vinod-Shivaram-Resume.pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+        Download resume (PDF)
+      </a>`;
+    } else {
+      resumeWrap.innerHTML = '';
+    }
 
     const c = data.contact || {};
     document.getElementById('contact-loc').innerText = c.location || '';

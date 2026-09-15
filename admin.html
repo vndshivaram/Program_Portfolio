@@ -101,6 +101,18 @@
     </div>
 
     <div class="panel">
+      <h2>Resume PDF</h2>
+      <p class="hint">Upload a PDF (under 700 KB) to show a "Download resume" button on the site. Uploading a new file replaces the old one.</p>
+      <div id="resume-current" style="margin-bottom:14px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;"></div>
+      <div class="field"><label>Choose PDF file</label><input type="file" id="resume-file" accept="application/pdf"></div>
+      <div class="actions">
+        <button id="resume-upload-btn">Upload &amp; use this PDF</button>
+        <button class="danger" id="resume-remove-btn">Remove current PDF</button>
+      </div>
+      <div id="resume-status" style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--teal);"></div>
+    </div>
+
+    <div class="panel">
       <h2>Experience</h2>
       <p class="hint">One card per role. Bullets: one per line.</p>
       <div id="roles-list"></div>
@@ -288,7 +300,69 @@
     document.getElementById('f-phone').value = data.contact?.phone || '';
     document.getElementById('f-linkedin').value = data.contact?.linkedin || '';
     document.getElementById('f-location').value = data.contact?.location || '';
+
+    renderResumeStatus();
   }
+
+  function renderResumeStatus(){
+    const el = document.getElementById('resume-current');
+    if (data.resumeDataUrl) {
+      const sizeKB = Math.round((data.resumeDataUrl.length * 0.75) / 1024); // rough decoded size estimate
+      el.innerHTML = `Current file: <a href="${data.resumeDataUrl}" target="_blank" rel="noopener" style="color:var(--teal);">view PDF</a> (~${sizeKB} KB)`;
+    } else {
+      el.innerText = 'No PDF uploaded yet.';
+    }
+  }
+
+  const MAX_PDF_BYTES = 700 * 1024; // keep comfortably under Firestore's 1 MiB document limit
+
+  document.getElementById('resume-upload-btn').onclick = () => {
+    const fileInput = document.getElementById('resume-file');
+    const file = fileInput.files[0];
+    const statusEl = document.getElementById('resume-status');
+    if (!file) { statusEl.style.color = 'var(--danger)'; statusEl.innerText = 'Choose a PDF file first.'; return; }
+    if (file.type !== 'application/pdf') { statusEl.style.color = 'var(--danger)'; statusEl.innerText = 'That file is not a PDF.'; return; }
+    if (file.size > MAX_PDF_BYTES) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.innerText = `That file is ${Math.round(file.size/1024)} KB — please use one under ${Math.round(MAX_PDF_BYTES/1024)} KB (try compressing the PDF).`;
+      return;
+    }
+    statusEl.style.color = 'var(--teal)';
+    statusEl.innerText = 'Uploading…';
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        data.resumeDataUrl = reader.result; // a data: URL, e.g. data:application/pdf;base64,...
+        await setDoc(docRef, data); // save immediately so the site updates right away
+        renderResumeStatus();
+        fileInput.value = '';
+        statusEl.innerText = 'Uploaded — live on the site now.';
+        setTimeout(() => statusEl.innerText = '', 3000);
+      } catch (e) {
+        statusEl.style.color = 'var(--danger)';
+        statusEl.innerText = 'Save failed: ' + e.message;
+      }
+    };
+    reader.onerror = () => { statusEl.style.color = 'var(--danger)'; statusEl.innerText = 'Could not read that file.'; };
+    reader.readAsDataURL(file);
+  };
+
+  document.getElementById('resume-remove-btn').onclick = async () => {
+    const statusEl = document.getElementById('resume-status');
+    if (!data.resumeDataUrl) return;
+    statusEl.style.color = 'var(--teal)';
+    statusEl.innerText = 'Removing…';
+    try {
+      data.resumeDataUrl = '';
+      await setDoc(docRef, data);
+      renderResumeStatus();
+      statusEl.innerText = 'Removed.';
+      setTimeout(() => statusEl.innerText = '', 3000);
+    } catch (e) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.innerText = 'Remove failed: ' + e.message;
+    }
+  };
 
   function renderStats(){
     const el = document.getElementById('stats-list');
