@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Vinod Shivaram Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#161B18; --ink-soft:#252B27; --paper:#EEF0E9; --card:#FFFFFF;
+    --gold:#D9A441; --teal:#3F6E64; --muted:#8B9187; --muted-dark:#6B7268;
+    --line:#D8DBD0; --danger:#B14A3E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;}
+  h1,h2{font-family:'Space Grotesk',sans-serif;font-weight:600;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  input,textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--line);background:#fff;
+    font-family:'Inter',sans-serif;font-size:0.9rem;border-radius:2px;
+  }
+  textarea{resize:vertical;min-height:70px;}
+  label{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--muted-dark);display:block;margin-bottom:4px;}
+  button{
+    font-family:'IBM Plex Mono',monospace;font-size:0.8rem;cursor:pointer;
+    padding:10px 18px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:2px;
+  }
+  button.secondary{background:transparent;color:var(--ink);}
+  button.danger{background:transparent;color:var(--danger);border-color:var(--danger);}
+  button:hover{opacity:0.85;}
+
+  /* login screen */
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;}
+  #login-box{background:var(--card);padding:44px;width:340px;border:1px solid var(--line);}
+  #login-box h1{font-size:1.3rem;margin-bottom:6px;}
+  #login-box p{color:var(--muted-dark);font-size:0.85rem;margin-bottom:24px;}
+  #login-box .field{margin-bottom:14px;}
+  #login-error{color:var(--danger);font-size:0.82rem;margin-top:10px;min-height:1em;}
+
+  /* admin shell */
+  #admin-screen{display:none;}
+  header.topbar{
+    background:var(--ink);color:var(--paper);padding:18px 32px;
+    display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;
+  }
+  header.topbar .title{font-family:'Space Grotesk',sans-serif;font-weight:600;}
+  header.topbar .status{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--gold);}
+  #wrap{max-width:900px;margin:0 auto;padding:40px 24px 100px;}
+  .panel{background:var(--card);border:1px solid var(--line);padding:28px;margin-bottom:28px;}
+  .panel h2{font-size:1.15rem;margin-bottom:6px;}
+  .panel .hint{color:var(--muted-dark);font-size:0.82rem;margin-bottom:20px;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  @media (max-width:640px){.row{grid-template-columns:1fr;}}
+  .field{margin-bottom:14px;}
+  .item-card{border:1px solid var(--line);padding:18px;margin-bottom:14px;position:relative;background:#FAFAF6;}
+  .item-card .rm{position:absolute;top:12px;right:12px;}
+  .stats-row{display:grid;grid-template-columns:1fr 3fr auto;gap:10px;margin-bottom:10px;align-items:end;}
+  .actions{display:flex;gap:10px;margin-top:10px;}
+  #save-bar{
+    position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);
+    padding:16px 24px;display:flex;justify-content:space-between;align-items:center;
+    max-width:900px;margin:0 auto;
+  }
+  #save-msg{font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--teal);}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div id="login-box">
+    <h1>Admin login</h1>
+    <p>Sign in to edit the portfolio content.</p>
+    <div class="field"><label>Email</label><input id="login-email" type="email" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input id="login-pass" type="password" autocomplete="current-password"></div>
+    <button id="login-btn" style="width:100%;">Sign in</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<div id="admin-screen">
+  <header class="topbar">
+    <div class="title">Portfolio Admin</div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span class="status" id="who"></span>
+      <button class="secondary" id="logout-btn" style="color:#EEF0E9;border-color:#EEF0E9;">Log out</button>
+    </div>
+  </header>
+
+  <div id="wrap">
+
+    <div class="panel">
+      <h2>Hero</h2>
+      <p class="hint">The top of the page — headline and the four highlight stats.</p>
+      <div class="field"><label>Role title (shown in sidebar)</label><input id="f-roletitle"></div>
+      <div class="field"><label>Kicker line</label><input id="f-kicker"></div>
+      <div class="field"><label>Headline</label><textarea id="f-headline"></textarea></div>
+      <div class="field"><label>Subheading</label><textarea id="f-sub"></textarea></div>
+      <label>Stats</label>
+      <div id="stats-list"></div>
+      <div class="actions"><button class="secondary" id="add-stat">+ Add stat</button></div>
+    </div>
+
+    <div class="panel">
+      <h2>Experience</h2>
+      <p class="hint">One card per role. Bullets: one per line.</p>
+      <div id="roles-list"></div>
+      <div class="actions"><button class="secondary" id="add-role">+ Add role</button></div>
+    </div>
+
+    <div class="panel">
+      <h2>Projects</h2>
+      <div id="projects-list"></div>
+      <div class="actions"><button class="secondary" id="add-project">+ Add project</button></div>
+    </div>
+
+    <div class="panel">
+      <h2>Skills</h2>
+      <p class="hint">Tags: comma-separated.</p>
+      <div id="skills-list"></div>
+      <div class="actions"><button class="secondary" id="add-skillgroup">+ Add skill group</button></div>
+    </div>
+
+    <div class="panel">
+      <h2>Education</h2>
+      <div id="education-list"></div>
+      <div class="actions"><button class="secondary" id="add-education">+ Add entry</button></div>
+    </div>
+
+    <div class="panel">
+      <h2>Certifications</h2>
+      <div id="certs-list"></div>
+      <div class="actions"><button class="secondary" id="add-cert">+ Add entry</button></div>
+    </div>
+
+    <div class="panel">
+      <h2>Contact</h2>
+      <div class="row">
+        <div class="field"><label>Email</label><input id="f-email"></div>
+        <div class="field"><label>Phone</label><input id="f-phone"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>LinkedIn URL</label><input id="f-linkedin"></div>
+        <div class="field"><label>Location</label><input id="f-location"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="save-bar">
+    <span id="save-msg"></span>
+    <div style="display:flex;gap:10px;">
+      <button class="secondary" id="reload-btn">Discard changes</button>
+      <button id="save-btn">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FIREBASE SETUP: paste the SAME config as in index.html
+     ============================================================ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+  const docRef = doc(db, "site", "portfolio");
+
+  let data = null; // working copy of the whole document
+
+  // ---------- auth ----------
+  document.getElementById('login-btn').onclick = async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    document.getElementById('login-error').innerText = '';
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (e) {
+      document.getElementById('login-error').innerText = 'Sign-in failed: ' + e.message;
+    }
+  };
+  document.getElementById('logout-btn').onclick = () => signOut(auth);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-screen').style.display = 'block';
+      document.getElementById('who').innerText = user.email;
+      await loadData();
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('admin-screen').style.display = 'none';
+    }
+  });
+
+  // ---------- data load ----------
+  async function loadData(){
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      data = snap.data();
+    } else {
+      data = emptyDoc();
+    }
+    renderForm();
+  }
+
+  function emptyDoc(){
+    // Seed with the original resume content so the first Save populates Firestore correctly.
+    return {
+      roleTitle: "Program Manager — Delivery & Governance",
+      hero: {
+        kicker: "Program governance / delivery leadership",
+        headline: "Ships releases on schedule. Even when the schedule is fighting back.",
+        sub: "Six years running program delivery across FinTech and gaming platforms — from a fraud-detection engine at HDFC's PayZapp to greenfield market launches for Junglee Games.",
+        stats: [
+          {num:"60M+", label:"FinTech users reached through PayZapp 2.0 initiatives"},
+          {num:"99%+", label:"Fraud-detection accuracy delivered on the FRM program"},
+          {num:"8/8", label:"Regulatory releases shipped with full compliance"},
+          {num:"95.83%", label:"Delivery success ratio, up from 85.51% in four months"}
+        ]
+      },
+      roles: [
+        {when:"Dec 2024 — Present", org:"Junglee Games · Flutter International", title:"Associate Program Manager",
+         bullets:["Own end-to-end program governance across FE, BE, QA, Platform, web and mobile teams for gaming products, including RGS.",
+                  "Run half-yearly roadmap planning with capacity modeling and WSJF prioritization, sustaining an 85%+ sprint success ratio.",
+                  "Directed a compliance-driven product sunset; redeployed as Program Lead for Rafflee (UK) and Tongits Go (Philippines) across a 30-member team.",
+                  "Led go-live war room for Rafflee; weekly release governance lifted delivery success from 85.51% to 95.83% in four months."]},
+        {when:"Sep 2021 — Dec 2024", org:"Zeta · PayZapp 2.0 (HDFC)", title:"Project Manager",
+         bullets:["Owned program delivery for PayZapp across 12+ initiatives touching 60M+ users.",
+                  "Coordinated 25+ stakeholders and 5 vendors for quarterly roadmap planning.",
+                  "Delivered 8 regulatory releases at 100% compliance, cutting deployment time by 50%.",
+                  "Coordinated a 20-member team to take the FeatureSpace fraud-detection program live at 99%+ accuracy."]},
+        {when:"Aug 2019 — Sep 2021", org:"Graphene Services Pvt Ltd", title:"Project Coordinator",
+         bullets:["Delivered 11+ web and data-analytics projects using Agile/Scrum.", "Authored 100+ user stories and supported QA/UAT for Tableau dashboards."]}
+      ],
+      projects: [
+        {name:"RGS — Junglee Rummy", tag:"Platform roadmap & delivery governance", desc:"Owned the program charter, WBS, and stakeholder register; embedded WSJF-based prioritization into roadmap governance."},
+        {name:"Rafflee (UK) & Tongits Go (Philippines)", tag:"New market launch programs", desc:"Led scope, schedule and integration management from kickoff to go-live for a 30-member, multi-geography team."},
+        {name:"Fraud & Risk Management (FeatureSpace FRM)", tag:"HDFC", desc:"Delivered a fraud-detection platform at 99%+ accuracy, integrated with HDFC's Risk Management system."},
+        {name:"PayZapp 2.0", tag:"Mobile product delivery, HDFC", desc:"Delivered Onboarding Journey, Refer-and-Earn, Shops Page and Zapp Account R&D across Android and iOS."}
+      ],
+      skillGroups: [
+        {title:"Program / Project Management", tags:["Program Governance","Agile Delivery","Roadmap Planning","WSJF Prioritization","Capacity Planning","WBS","RAID / Change Control","Release Management","UAT & Go-Live","PMO Reporting","KPI Tracking"]},
+        {title:"Agile & Delivery Excellence", tags:["Scrum","Kanban","Sprint Planning","Backlog Grooming","Release Readiness","Cutover Planning","Post-Release Stabilization","Risk Mitigation","Dependency Management"]},
+        {title:"Technical Delivery", tags:["SDLC","Web & Mobile Delivery","Android / iOS Release","Frontend / Backend / QA","API Integration","REST APIs","Webhooks","SQL"]},
+        {title:"Tools & Platforms", tags:["Jira","JQL","Confluence","Postman","Git","MS Project","SharePoint","Zapier","AWS","Azure"]},
+        {title:"AI & Automation", tags:["Claude","ChatGPT","Perplexity AI","GenAI-Assisted Process Design","AI-Driven Risk Prediction","Jira Automation","Roadmap Automation"]}
+      ],
+      education: [
+        {title:"MBA, Marketing & International Business", sub:"Bharathidasan University · Aug 2017 — Jun 2019"},
+        {title:"B.E., Computer Science", sub:"Visvesvaraya Technological University · Aug 2013 — Jun 2017"}
+      ],
+      certifications: [
+        {title:"Certified ScrumMaster (CSM)", sub:"Scrum Alliance, Inc. · Jun 2021 — Jun 2027"},
+        {title:"Introduction to GenAI for Business Process Automation", sub:"2025"}
+      ],
+      contact: {email:"vndshivaram@gmail.com", phone:"+91 80735 38346", linkedin:"https://www.linkedin.com/in/vinod-shivaram-146603135/", location:"Bengaluru, Karnataka, India"}
+    };
+  }
+
+  // ---------- render form from `data` ----------
+  function renderForm(){
+    document.getElementById('f-roletitle').value = data.roleTitle || '';
+    document.getElementById('f-kicker').value = data.hero?.kicker || '';
+    document.getElementById('f-headline').value = data.hero?.headline || '';
+    document.getElementById('f-sub').value = data.hero?.sub || '';
+
+    renderStats();
+    renderRoles();
+    renderProjects();
+    renderSkills();
+    renderList('education-list', data.education, ['title','sub'], 'education');
+    renderList('certs-list', data.certifications, ['title','sub'], 'certifications');
+
+    document.getElementById('f-email').value = data.contact?.email || '';
+    document.getElementById('f-phone').value = data.contact?.phone || '';
+    document.getElementById('f-linkedin').value = data.contact?.linkedin || '';
+    document.getElementById('f-location').value = data.contact?.location || '';
+  }
+
+  function renderStats(){
+    const el = document.getElementById('stats-list');
+    el.innerHTML = '';
+    (data.hero.stats||[]).forEach((s, i) => {
+      const row = document.createElement('div');
+      row.className = 'stats-row';
+      row.innerHTML = `
+        <div><label>Number</label><input value="${escAttr(s.num)}" data-i="${i}" class="stat-num"></div>
+        <div><label>Label</label><input value="${escAttr(s.label)}" data-i="${i}" class="stat-label"></div>
+        <button class="danger rm-stat" data-i="${i}">Remove</button>`;
+      el.appendChild(row);
+    });
+    el.querySelectorAll('.stat-num').forEach(i => i.oninput = e => data.hero.stats[e.target.dataset.i].num = e.target.value);
+    el.querySelectorAll('.stat-label').forEach(i => i.oninput = e => data.hero.stats[e.target.dataset.i].label = e.target.value);
+    el.querySelectorAll('.rm-stat').forEach(b => b.onclick = e => { data.hero.stats.splice(e.target.dataset.i,1); renderStats(); });
+  }
+  document.getElementById('add-stat').onclick = () => { data.hero.stats.push({num:'', label:''}); renderStats(); };
+
+  function renderRoles(){
+    const el = document.getElementById('roles-list');
+    el.innerHTML = '';
+    (data.roles||[]).forEach((r, i) => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <button class="danger rm">Remove</button>
+        <div class="row">
+          <div class="field"><label>Dates</label><input class="r-when" value="${escAttr(r.when)}"></div>
+          <div class="field"><label>Title</label><input class="r-title" value="${escAttr(r.title)}"></div>
+        </div>
+        <div class="field"><label>Company</label><input class="r-org" value="${escAttr(r.org)}"></div>
+        <div class="field"><label>Bullets (one per line)</label><textarea class="r-bullets" style="min-height:110px;">${escText((r.bullets||[]).join('\n'))}</textarea></div>`;
+      card.querySelector('.rm').onclick = () => { data.roles.splice(i,1); renderRoles(); };
+      card.querySelector('.r-when').oninput = e => r.when = e.target.value;
+      card.querySelector('.r-title').oninput = e => r.title = e.target.value;
+      card.querySelector('.r-org').oninput = e => r.org = e.target.value;
+      card.querySelector('.r-bullets').oninput = e => r.bullets = e.target.value.split('\n').map(s=>s.trim()).filter(Boolean);
+      el.appendChild(card);
+    });
+  }
+  document.getElementById('add-role').onclick = () => { data.roles.push({when:'',org:'',title:'',bullets:[]}); renderRoles(); };
+
+  function renderProjects(){
+    const el = document.getElementById('projects-list');
+    el.innerHTML = '';
+    (data.projects||[]).forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <button class="danger rm">Remove</button>
+        <div class="row">
+          <div class="field"><label>Name</label><input class="p-name" value="${escAttr(p.name)}"></div>
+          <div class="field"><label>Tag</label><input class="p-tag" value="${escAttr(p.tag)}"></div>
+        </div>
+        <div class="field"><label>Description</label><textarea class="p-desc">${escText(p.desc)}</textarea></div>`;
+      card.querySelector('.rm').onclick = () => { data.projects.splice(i,1); renderProjects(); };
+      card.querySelector('.p-name').oninput = e => p.name = e.target.value;
+      card.querySelector('.p-tag').oninput = e => p.tag = e.target.value;
+      card.querySelector('.p-desc').oninput = e => p.desc = e.target.value;
+      el.appendChild(card);
+    });
+  }
+  document.getElementById('add-project').onclick = () => { data.projects.push({name:'',tag:'',desc:''}); renderProjects(); };
+
+  function renderSkills(){
+    const el = document.getElementById('skills-list');
+    el.innerHTML = '';
+    (data.skillGroups||[]).forEach((g, i) => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <button class="danger rm">Remove</button>
+        <div class="field"><label>Group title</label><input class="g-title" value="${escAttr(g.title)}"></div>
+        <div class="field"><label>Tags (comma-separated)</label><textarea class="g-tags">${escText((g.tags||[]).join(', '))}</textarea></div>`;
+      card.querySelector('.rm').onclick = () => { data.skillGroups.splice(i,1); renderSkills(); };
+      card.querySelector('.g-title').oninput = e => g.title = e.target.value;
+      card.querySelector('.g-tags').oninput = e => g.tags = e.target.value.split(',').map(s=>s.trim()).filter(Boolean);
+      el.appendChild(card);
+    });
+  }
+  document.getElementById('add-skillgroup').onclick = () => { data.skillGroups.push({title:'',tags:[]}); renderSkills(); };
+
+  function renderList(containerId, arr, fields, key){
+    const el = document.getElementById(containerId);
+    el.innerHTML = '';
+    (arr||[]).forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <button class="danger rm">Remove</button>
+        <div class="field"><label>Title</label><input class="li-title" value="${escAttr(item.title)}"></div>
+        <div class="field"><label>Subtitle</label><input class="li-sub" value="${escAttr(item.sub)}"></div>`;
+      card.querySelector('.rm').onclick = () => { data[key].splice(i,1); renderList(containerId, data[key], fields, key); };
+      card.querySelector('.li-title').oninput = e => item.title = e.target.value;
+      card.querySelector('.li-sub').oninput = e => item.sub = e.target.value;
+      el.appendChild(card);
+    });
+  }
+  document.getElementById('add-education').onclick = () => { data.education.push({title:'',sub:''}); renderList('education-list', data.education, [], 'education'); };
+  document.getElementById('add-cert').onclick = () => { data.certifications.push({title:'',sub:''}); renderList('certs-list', data.certifications, [], 'certifications'); };
+
+  // top-level field bindings
+  ['f-roletitle','f-kicker','f-headline','f-sub','f-email','f-phone','f-linkedin','f-location'].forEach(id => {
+    document.getElementById(id).addEventListener('input', syncTopFields);
+  });
+  function syncTopFields(){
+    data.roleTitle = document.getElementById('f-roletitle').value;
+    data.hero.kicker = document.getElementById('f-kicker').value;
+    data.hero.headline = document.getElementById('f-headline').value;
+    data.hero.sub = document.getElementById('f-sub').value;
+    data.contact.email = document.getElementById('f-email').value;
+    data.contact.phone = document.getElementById('f-phone').value;
+    data.contact.linkedin = document.getElementById('f-linkedin').value;
+    data.contact.location = document.getElementById('f-location').value;
+  }
+
+  // ---------- save / reload ----------
+  document.getElementById('save-btn').onclick = async () => {
+    syncTopFields();
+    document.getElementById('save-msg').innerText = 'Saving…';
+    try {
+      await setDoc(docRef, data);
+      document.getElementById('save-msg').innerText = 'Saved — live on the site now.';
+      setTimeout(() => document.getElementById('save-msg').innerText = '', 3000);
+    } catch (e) {
+      document.getElementById('save-msg').innerText = 'Save failed: ' + e.message;
+    }
+  };
+  document.getElementById('reload-btn').onclick = loadData;
+
+  function escAttr(s){ return (s ?? '').toString().replace(/"/g,'&quot;'); }
+  function escText(s){ const d=document.createElement('div'); d.innerText = s ?? ''; return d.innerHTML; }
+</script>
+</body>
+</html>
