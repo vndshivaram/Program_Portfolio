@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinod Shivaram — Program Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#161B18;
+    --ink-soft:#252B27;
+    --paper:#EEF0E9;
+    --paper-dim:#E2E5DA;
+    --gold:#D9A441;
+    --teal:#3F6E64;
+    --muted:#8B9187;
+    --muted-dark:#6B7268;
+    --line:rgba(255,255,255,0.12);
+    --line-dark:rgba(22,27,24,0.14);
+    --radius:2px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.55;
+    font-size:16px;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .mono{
+    font-family:'IBM Plex Mono',monospace;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ---- layout shell ---- */
+  .shell{
+    display:grid;
+    grid-template-columns:300px 1fr;
+    min-height:100vh;
+  }
+  @media (max-width:920px){
+    .shell{grid-template-columns:1fr;}
+  }
+
+  /* ---- sidebar ---- */
+  .sidebar{
+    background:var(--ink);
+    color:var(--paper);
+    padding:48px 36px;
+    position:sticky;
+    top:0;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  @media (max-width:920px){
+    .sidebar{position:relative;height:auto;padding:32px 24px;}
+  }
+  .sb-top .name{
+    font-size:1.5rem;
+    line-height:1.2;
+    margin-bottom:6px;
+  }
+  .sb-top .role{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    color:var(--gold);
+    margin-bottom:28px;
+  }
+  .sb-nav{display:flex;flex-direction:column;gap:14px;margin-bottom:32px;}
+  .sb-nav a{
+    font-size:0.92rem;
+    color:var(--muted);
+    padding:6px 0;
+    border-left:2px solid transparent;
+    padding-left:12px;
+    transition:color .15s, border-color .15s;
+  }
+  .sb-nav a:hover, .sb-nav a.active{
+    color:var(--paper);
+    border-left-color:var(--gold);
+  }
+  .sb-status{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:var(--muted-dark);
+    line-height:1.7;
+    border-top:1px solid var(--line);
+    padding-top:18px;
+  }
+  .sb-status .dot{
+    display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--gold);margin-right:8px;
+  }
+  .sb-bottom{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    line-height:2;
+  }
+  .sb-bottom a{color:var(--paper);border-bottom:1px solid var(--line);}
+  .sb-bottom a:hover{border-bottom-color:var(--gold);color:var(--gold);}
+  .sb-loc{color:var(--muted-dark);margin-top:10px;}
+
+  /* ---- main ---- */
+  main{padding:0;}
+  section{
+    padding:88px 64px;
+    border-bottom:1px solid var(--line-dark);
+    max-width:900px;
+  }
+  @media (max-width:920px){
+    section{padding:56px 24px;}
+  }
+  section:last-of-type{border-bottom:none;}
+
+  .kicker{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.75rem;
+    color:var(--teal);
+    margin-bottom:14px;
+  }
+
+  /* hero */
+  #hero{padding-top:64px;}
+  .hero-head{
+    font-size:clamp(2.1rem, 4vw, 3.2rem);
+    line-height:1.12;
+    max-width:14ch;
+    margin-bottom:22px;
+  }
+  .hero-sub{
+    max-width:62ch;
+    color:var(--ink-soft);
+    font-size:1.05rem;
+    margin-bottom:44px;
+  }
+  .ledger{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--line-dark);
+    border-left:1px solid var(--line-dark);
+  }
+  @media (max-width:700px){
+    .ledger{grid-template-columns:repeat(2,1fr);}
+  }
+  .ledger-cell{
+    border-right:1px solid var(--line-dark);
+    border-bottom:1px solid var(--line-dark);
+    padding:20px 18px;
+  }
+  .ledger-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:1.7rem;
+    color:var(--teal);
+  }
+  .ledger-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.7rem;
+    color:var(--muted-dark);
+    margin-top:6px;
+    line-height:1.4;
+  }
+
+  /* section heads */
+  .sec-head{
+    font-size:1.7rem;
+    margin-bottom:12px;
+  }
+  .sec-intro{
+    color:var(--ink-soft);
+    max-width:62ch;
+    margin-bottom:44px;
+  }
+
+  /* timeline */
+  .role{
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:24px;
+    padding:32px 0;
+    border-top:1px solid var(--line-dark);
+  }
+  .role:last-child{border-bottom:1px solid var(--line-dark);}
+  @media (max-width:700px){
+    .role{grid-template-columns:1fr;gap:8px;}
+  }
+  .role-when{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    color:var(--muted-dark);
+    padding-top:4px;
+  }
+  .role-org{
+    font-size:1.15rem;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    margin-bottom:2px;
+  }
+  .role-title{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.8rem;
+    color:var(--teal);
+    margin-bottom:16px;
+  }
+  .role ul{
+    padding-left:18px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .role li{
+    color:var(--ink-soft);
+    font-size:0.96rem;
+  }
+  .role li b{color:var(--ink);font-weight:600;}
+
+  /* projects */
+  .projects{
+    display:flex;
+    flex-direction:column;
+  }
+  .project{
+    padding:26px 0;
+    border-top:1px solid var(--line-dark);
+    display:grid;
+    grid-template-columns:1fr 2.2fr;
+    gap:24px;
+  }
+  .project:last-child{border-bottom:1px solid var(--line-dark);}
+  @media (max-width:700px){
+    .project{grid-template-columns:1fr;gap:6px;}
+  }
+  .project-name{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:1.02rem;
+  }
+  .project-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.7rem;
+    color:var(--gold);
+    display:block;
+    margin-top:4px;
+  }
+  .project-desc{color:var(--ink-soft);font-size:0.94rem;}
+
+  /* skills */
+  .skill-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px 48px;
+  }
+  @media (max-width:700px){
+    .skill-grid{grid-template-columns:1fr;}
+  }
+  .skill-group-title{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:var(--teal);
+    margin-bottom:12px;
+  }
+  .skill-tags{
+    display:flex;flex-wrap:wrap;gap:8px;
+  }
+  .skill-tags span{
+    font-size:0.82rem;
+    padding:6px 12px;
+    border:1px solid var(--line-dark);
+    color:var(--ink-soft);
+  }
+
+  /* education/certs */
+  .ed-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+  }
+  @media (max-width:700px){
+    .ed-grid{grid-template-columns:1fr;}
+  }
+  .ed-item{
+    border-top:1px solid var(--line-dark);
+    padding-top:16px;
+    margin-bottom:20px;
+  }
+  .ed-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;}
+  .ed-sub{color:var(--muted-dark);font-size:0.85rem;font-family:'IBM Plex Mono',monospace;margin-top:4px;}
+
+  /* contact */
+  #contact{
+    background:var(--ink);
+    color:var(--paper);
+    max-width:none;
+    padding:88px 64px;
+  }
+  @media (max-width:920px){#contact{padding:56px 24px;}}
+  #contact .sec-head{color:var(--paper);}
+  #contact .sec-intro{color:var(--muted);}
+  .contact-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-top:12px;
+  }
+  .contact-links a{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.85rem;
+    padding:12px 20px;
+    border:1px solid var(--line);
+    color:var(--paper);
+    transition:border-color .15s, color .15s;
+  }
+  .contact-links a:hover{border-color:var(--gold);color:var(--gold);}
+  footer{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:var(--muted-dark);
+    margin-top:56px;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="name">Vinod Shivaram</div>
+      <div class="role">Program Manager — Delivery &amp; Governance</div>
+      <nav class="sb-nav" id="sbnav">
+        <a href="#hero">Overview</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#education">Education</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="sb-status">
+        <div><span class="dot"></span>Bengaluru, Karnataka, India</div>
+        <div>6+ yrs · Gaming &amp; FinTech delivery</div>
+        <div>Open to Program / Project Manager roles</div>
+      </div>
+    </div>
+    <div class="sb-bottom">
+      <div><a href="mailto:vndshivaram@gmail.com">vndshivaram@gmail.com</a></div>
+      <div><a href="tel:+918073538346">+91 80735 38346</a></div>
+      <div><a href="https://www.linkedin.com/in/vinod-shivaram-146603135/" target="_blank" rel="noopener">linkedin.com/in/vinod-shivaram</a></div>
+    </div>
+  </aside>
+
+  <main>
+
+    <section id="hero">
+      <div class="kicker">Program governance / delivery leadership</div>
+      <h1 class="hero-head">Ships releases on schedule. Even when the schedule is fighting back.</h1>
+      <p class="hero-sub">Six years running program delivery across FinTech and gaming platforms — from a fraud-detection engine at HDFC's PayZapp to greenfield market launches for Junglee Games. Strongest where scope, compliance, and a cross-geography team all move at once.</p>
+      <div class="ledger">
+        <div class="ledger-cell">
+          <div class="ledger-num">60M+</div>
+          <div class="ledger-label">FinTech users reached through PayZapp 2.0 initiatives</div>
+        </div>
+        <div class="ledger-cell">
+          <div class="ledger-num">99%+</div>
+          <div class="ledger-label">Fraud-detection accuracy delivered on the FRM program</div>
+        </div>
+        <div class="ledger-cell">
+          <div class="ledger-num">8/8</div>
+          <div class="ledger-label">Regulatory releases shipped with full compliance</div>
+        </div>
+        <div class="ledger-cell">
+          <div class="ledger-num">95.83%</div>
+          <div class="ledger-label">Delivery success ratio, up from 85.51% in four months</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="kicker">2019 — Present</div>
+      <h2 class="sec-head">Experience</h2>
+      <p class="sec-intro">Three roles, one throughline: turn a moving target — regulation, geography, or team size — into a governable schedule.</p>
+
+      <div class="role">
+        <div class="role-when">Dec 2024 — Present</div>
+        <div>
+          <div class="role-org">Junglee Games · Flutter International</div>
+          <div class="role-title">Associate Program Manager</div>
+          <ul>
+            <li>Own end-to-end program governance across FE, BE, QA, Platform, web and mobile teams for gaming products, including RGS, the platform behind Junglee Rummy.</li>
+            <li>Run half-yearly roadmap planning with capacity modeling and WSJF prioritization, sustaining an <b>85%+ sprint success ratio</b> under 2-week sprint governance and RAID tracking.</li>
+            <li>Directed a compliance-driven product sunset after a regulatory ban — closed every obligation on schedule, then redeployed as Program Lead for two greenfield launches, Rafflee (UK) and Tongits Go (Philippines), across a <b>30-member cross-geography team</b>.</li>
+            <li>Led the go-live war room for Rafflee's launch and post-launch stabilization; weekly release governance lifted delivery success from <b>85.51% to 95.83%</b> in four months.</li>
+            <li>Automated sprint dashboards and release workflows through Jira and Zapier, cutting manual reporting effort.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="role-when">Sep 2021 — Dec 2024</div>
+        <div>
+          <div class="role-org">Zeta · PayZapp 2.0 (HDFC)</div>
+          <div class="role-title">Project Manager</div>
+          <ul>
+            <li>Owned program delivery for PayZapp, HDFC's flagship app, across 12+ customer experience and compliance initiatives touching <b>60M+ users</b>.</li>
+            <li>Coordinated 25+ stakeholders and 5 vendors spanning product, engineering, QA, operations and compliance for quarterly roadmap planning.</li>
+            <li>Delivered <b>8 regulatory releases at 100% compliance</b>, cutting deployment time by 50%, escalations by 25%, and lifting CSAT by 17%.</li>
+            <li>Coordinated a 20-member BE/QA team to take the FeatureSpace fraud-detection program live at <b>99%+ accuracy</b>, integrated with HDFC's Risk Management system.</li>
+            <li>Introduced Agile practices with HDFC that cut escalations by 22% and improved delivery predictability.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="role-when">Aug 2019 — Sep 2021</div>
+        <div>
+          <div class="role-org">Graphene Services Pvt Ltd</div>
+          <div class="role-title">Project Coordinator</div>
+          <ul>
+            <li>Delivered 11+ web and data-analytics projects using Agile/Scrum.</li>
+            <li>Authored 100+ user stories and supported QA/UAT for Tableau dashboards.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="kicker">Selected work</div>
+      <h2 class="sec-head">Projects</h2>
+      <p class="sec-intro">Programs, not just tickets — each one required its own governance model.</p>
+
+      <div class="projects">
+        <div class="project">
+          <div>
+            <div class="project-name">RGS — Junglee Rummy</div>
+            <span class="project-tag">Platform roadmap &amp; delivery governance</span>
+          </div>
+          <div class="project-desc">Owned the program charter, WBS, and stakeholder register for a core cash-generating gaming platform; embedded WSJF-based prioritization into bi-annual roadmap governance.</div>
+        </div>
+        <div class="project">
+          <div>
+            <div class="project-name">Rafflee (UK) &amp; Tongits Go (Philippines)</div>
+            <span class="project-tag">New market launch programs</span>
+          </div>
+          <div class="project-desc">Led scope, schedule and integration management from kickoff to go-live for a 30-member, multi-geography delivery team; ran the cutover war-room for launch.</div>
+        </div>
+        <div class="project">
+          <div>
+            <div class="project-name">Fraud &amp; Risk Management (FeatureSpace FRM)</div>
+            <span class="project-tag">HDFC</span>
+          </div>
+          <div class="project-desc">Delivered a fraud-detection platform at 99%+ accuracy, integrated with HDFC's Risk Management system, from requirements through go-live.</div>
+        </div>
+        <div class="project">
+          <div>
+            <div class="project-name">PayZapp 2.0</div>
+            <span class="project-tag">Mobile product delivery, HDFC</span>
+          </div>
+          <div class="project-desc">Delivered Onboarding Journey, Refer-and-Earn, Shops Page and Zapp Account R&amp;D across Android and iOS, coordinating 25+ stakeholders and 5 vendors from planning through UAT and release.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="kicker">Toolkit</div>
+      <h2 class="sec-head">Skills</h2>
+      <div class="skill-grid">
+        <div>
+          <div class="skill-group-title">Program / Project Management</div>
+          <div class="skill-tags">
+            <span>Program Governance</span><span>Agile Delivery</span><span>Roadmap Planning</span>
+            <span>WSJF Prioritization</span><span>Capacity Planning</span><span>WBS</span>
+            <span>RAID / Change Control</span><span>Release Management</span><span>UAT &amp; Go-Live</span>
+            <span>PMO Reporting</span><span>KPI Tracking</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-title">Agile &amp; Delivery Excellence</div>
+          <div class="skill-tags">
+            <span>Scrum</span><span>Kanban</span><span>Sprint Planning</span><span>Backlog Grooming</span>
+            <span>Release Readiness</span><span>Cutover Planning</span><span>Post-Release Stabilization</span>
+            <span>Risk Mitigation</span><span>Dependency Management</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-title">Technical Delivery</div>
+          <div class="skill-tags">
+            <span>SDLC</span><span>Web &amp; Mobile Delivery</span><span>Android / iOS Release</span>
+            <span>Frontend / Backend / QA</span><span>API Integration</span><span>REST APIs</span>
+            <span>Webhooks</span><span>SQL</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-title">Tools &amp; Platforms</div>
+          <div class="skill-tags">
+            <span>Jira</span><span>JQL</span><span>Confluence</span><span>Postman</span><span>Git</span>
+            <span>MS Project</span><span>SharePoint</span><span>Zapier</span><span>AWS</span><span>Azure</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-title">AI &amp; Automation</div>
+          <div class="skill-tags">
+            <span>Claude</span><span>ChatGPT</span><span>Perplexity AI</span><span>GenAI-Assisted Process Design</span>
+            <span>AI-Driven Risk Prediction</span><span>Jira Automation</span><span>Roadmap Automation</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-title">Key innovation</div>
+          <div class="skill-tags">
+            <span>Jira Sprint Success Dashboard — cut release documentation effort ~90%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="education">
+      <div class="kicker">Background</div>
+      <h2 class="sec-head">Education &amp; Certifications</h2>
+      <div class="ed-grid">
+        <div>
+          <div class="ed-item">
+            <div class="ed-title">MBA, Marketing &amp; International Business</div>
+            <div class="ed-sub">Bharathidasan University · Aug 2017 — Jun 2019</div>
+          </div>
+          <div class="ed-item">
+            <div class="ed-title">B.E., Computer Science</div>
+            <div class="ed-sub">Visvesvaraya Technological University · Aug 2013 — Jun 2017</div>
+          </div>
+        </div>
+        <div>
+          <div class="ed-item">
+            <div class="ed-title">Certified ScrumMaster (CSM)</div>
+            <div class="ed-sub">Scrum Alliance, Inc. · Jun 2021 — Jun 2027</div>
+          </div>
+          <div class="ed-item">
+            <div class="ed-title">Introduction to GenAI for Business Process Automation</div>
+            <div class="ed-sub">2025</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="kicker" style="color:var(--gold);">Get in touch</div>
+      <h2 class="sec-head">Let's talk about your next program</h2>
+      <p class="sec-intro">Based in Bengaluru, open to Program Manager and Project Manager roles across FinTech, gaming, and platform delivery.</p>
+      <div class="contact-links">
+        <a href="mailto:vndshivaram@gmail.com">vndshivaram@gmail.com</a>
+        <a href="tel:+918073538346">+91 80735 38346</a>
+        <a href="https://www.linkedin.com/in/vinod-shivaram-146603135/" target="_blank" rel="noopener">LinkedIn Profile</a>
+      </div>
+      <footer>Vinod Shivaram — Program Manager, Bengaluru, Karnataka, India</footer>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // highlight active nav link on scroll
+  const links = document.querySelectorAll('#sbnav a');
+  const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href')));
+  const setActive = () => {
+    let idx = 0;
+    const y = window.scrollY + window.innerHeight * 0.3;
+    sections.forEach((sec, i) => { if (sec && sec.offsetTop <= y) idx = i; });
+    links.forEach((l, i) => l.classList.toggle('active', i === idx));
+  };
+  window.addEventListener('scroll', setActive, { passive: true });
+  setActive();
+</script>
+</body>
+</html>
