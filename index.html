@@ -6,8 +6,8 @@
 <title>Vinod Shivaram — Program Manager</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
   :root{
     --ink:#161B18; --ink-soft:#252B27; --paper:#EEF0E9; --paper-dim:#E2E5DA;
     --gold:#D9A441; --teal:#3F6E64; --muted:#8B9187; --muted-dark:#6B7268;
@@ -15,26 +15,15 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
-body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:Arial,sans-serif;
-    line-height:1.55;
-    font-size:16px;
-}
-h1,h2,h3,.display{
-    font-family:Arial,sans-serif;
-}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.55;font-size:16px;}
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
   .mono{font-family:'IBM Plex Mono',monospace;}
   a{color:inherit;text-decoration:none;}
   .shell{display:grid;grid-template-columns:300px 1fr;min-height:100vh;}
   @media (max-width:920px){.shell{grid-template-columns:1fr;}}
   .sidebar{background:var(--ink);color:var(--paper);padding:48px 36px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:space-between;}
   @media (max-width:920px){.sidebar{position:relative;height:auto;padding:32px 24px;}}
-  .sb-top .name{f font-family:'Caveat', cursive;
-    font-size:1.8rem;
-    line-height:1.2;
-    margin-bottom:6px;}
+  .sb-top .name{font-size:1.5rem;line-height:1.2;margin-bottom:6px;}
   .sb-top .role{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--gold);margin-bottom:28px;}
   .sb-nav{display:flex;flex-direction:column;gap:14px;margin-bottom:32px;}
   .sb-nav a{font-size:0.92rem;color:var(--muted);padding:6px 0;border-left:2px solid transparent;padding-left:12px;transition:color .15s,border-color .15s;}
@@ -81,6 +70,10 @@ h1,h2,h3,.display{
   .skill-tags span{font-size:0.82rem;padding:6px 12px;border:1px solid var(--line-dark);color:var(--ink-soft);}
   .ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
   @media (max-width:700px){.ed-grid{grid-template-columns:1fr;}}
+  .ed-list{width:100%;}
+  .certifications-block{margin-top:56px;}
+  .certifications-block .kicker{margin-bottom:14px;}
+  .certifications-block .sec-head{margin-bottom:24px;}
   .ed-item{border-top:1px solid var(--line-dark);padding-top:16px;margin-bottom:20px;}
   .ed-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;}
   .ed-sub{color:var(--muted-dark);font-size:0.85rem;font-family:'IBM Plex Mono',monospace;margin-top:4px;}
@@ -100,28 +93,6 @@ h1,h2,h3,.display{
   }
   .resume-btn:hover{background:var(--ink);color:var(--paper);}
   .resume-btn svg{width:14px;height:14px;flex-shrink:0;}
-    /* Font customization */
-body,
-h1, h2, h3, .display,
-.mono,
-.kicker,
-.sb-top .role,
-.sb-nav a,
-.sb-status,
-.sb-bottom,
-.role-when,
-.role-title,
-.project-tag,
-.skill-group-title,
-.ed-sub,
-.contact-links a,
-footer {
-    font-family: Arial, sans-serif;
-}
-
-.sb-top .name {
-    font-family: 'Caveat', cursive;
-}
 </style>
 </head>
 <body>
@@ -147,7 +118,7 @@ footer {
 
   <main>
     <section id="hero">
-      <div class="kicker" id="hero-kicker"> </div>
+      <div class="kicker" id="hero-kicker">Program governance / delivery leadership</div>
       <h1 class="hero-head" id="hero-headline">Loading…</h1>
       <p class="hero-sub" id="hero-sub"></p>
       <div id="resume-btn-wrap" style="margin-bottom:32px;"></div>
@@ -155,36 +126,39 @@ footer {
     </section>
 
     <section id="experience">
-      <div class="kicker"> </div>
+      <div class="kicker">Experience</div>
       <h2 class="sec-head">Experience</h2>
-      <p class="sec-intro"> </p>
+      <p class="sec-intro">Career history, most recent first.</p>
       <div id="roles-container"></div>
     </section>
 
     <section id="projects">
-      <div class="kicker"> </div>
+      <div class="kicker">Selected work</div>
       <h2 class="sec-head">Projects</h2>
       <div class="projects" id="projects-container"></div>
     </section>
 
     <section id="skills">
-      <div class="kicker"> </div>
+      <div class="kicker">Toolkit</div>
       <h2 class="sec-head">Skills</h2>
       <div class="skill-grid" id="skills-container"></div>
     </section>
 
     <section id="education">
-      <div class="kicker"> </div>
-      <h2 class="sec-head">Education &amp; Certifications</h2>
-      <div class="ed-grid">
-        <div id="education-container"></div>
-        <div id="certs-container"></div>
+      <div class="kicker">Background</div>
+      <h2 class="sec-head">Education</h2>
+      <div id="education-container" class="ed-list"></div>
+
+      <div class="certifications-block">
+        <div class="kicker">Professional credentials</div>
+        <h2 class="sec-head">Certifications</h2>
+        <div id="certs-container" class="ed-list"></div>
       </div>
     </section>
 
     <section id="contact">
       <div class="kicker" style="color:var(--gold);">Get in touch</div>
-      <h2 class="sec-head">Want to catch up! Find my contact details Below</h2>
+      <h2 class="sec-head">Let's talk about your next program</h2>
       <p class="sec-intro">Based in <span id="contact-loc"></span>.</p>
       <div class="contact-links" id="contact-links"></div>
       <footer>Vinod Shivaram — Program Manager</footer>
