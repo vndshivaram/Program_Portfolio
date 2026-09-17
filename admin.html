@@ -89,6 +89,20 @@
     .uiux-grid{grid-template-columns:1fr;}
   }
 
+
+  select{
+    width:100%;padding:9px 11px;border:1px solid var(--line);background:#fff;
+    font-family:'Inter',sans-serif;font-size:.9rem;border-radius:2px;
+  }
+  .uiux-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;}
+  .color-field{display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:center;}
+  .color-field input[type="color"]{width:48px;height:42px;padding:3px;cursor:pointer;}
+  .font-preview{padding:16px;border:1px dashed var(--line);background:#FAFAF6;margin-top:16px;}
+  .font-preview .preview-heading{font-size:1.35rem;font-weight:600;margin-bottom:5px;}
+  .font-preview .preview-body{font-size:.9rem;}
+  .section-note{padding:12px 14px;background:#F3F5EE;border-left:3px solid var(--teal);font-size:.8rem;color:var(--muted-dark);margin-bottom:20px;}
+  @media (max-width:760px){.uiux-grid{grid-template-columns:1fr;}}
+
   #save-bar{
     position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);
     padding:16px 24px;display:flex;justify-content:space-between;align-items:center;
@@ -147,8 +161,12 @@
 
     <div class="panel" id="uiux-panel">
       <h2>UI/UX</h2>
-      <p class="hint">Control the visual style of the public portfolio without editing the HTML. Changes are saved to Firebase and applied live after saving.</p>
-      <div class="section-note">Choose the fonts and colours you want. The three font controls affect body text, headings, and monospaced labels/buttons independently.</div>
+      <p class="hint">Control the visual style of the public portfolio. Changes are stored in the same Firebase portfolio document as your content.</p>
+
+      <div class="section-note">
+        Change fonts and colours below. Use <strong>Save UI/UX</strong> to save only the theme settings.
+        Your portfolio content will not be changed.
+      </div>
 
       <h3 style="font-size:.95rem;margin-bottom:14px;">Fonts</h3>
       <div class="uiux-grid">
@@ -195,19 +213,26 @@
 
       <h3 style="font-size:.95rem;margin:20px 0 14px;">Colours</h3>
       <div class="uiux-grid">
-        <div class="field color-field"><input id="ux-ink" type="color"><div><label>Primary / sidebar</label><input id="ux-ink-text" type="text" placeholder="#161B18"></div></div>
-        <div class="field color-field"><input id="ux-paper" type="color"><div><label>Page background</label><input id="ux-paper-text" type="text" placeholder="#EEF0E9"></div></div>
-        <div class="field color-field"><input id="ux-ink-soft" type="color"><div><label>Secondary text</label><input id="ux-ink-soft-text" type="text" placeholder="#252B27"></div></div>
-        <div class="field color-field"><input id="ux-gold" type="color"><div><label>Primary accent</label><input id="ux-gold-text" type="text" placeholder="#D9A441"></div></div>
-        <div class="field color-field"><input id="ux-teal" type="color"><div><label>Secondary accent</label><input id="ux-teal-text" type="text" placeholder="#3F6E64"></div></div>
-        <div class="field color-field"><input id="ux-muted" type="color"><div><label>Muted text</label><input id="ux-muted-text" type="text" placeholder="#8B9187"></div></div>
-        <div class="field color-field"><input id="ux-muted-dark" type="color"><div><label>Dark muted text</label><input id="ux-muted-dark-text" type="text" placeholder="#6B7268"></div></div>
-        <div class="field color-field"><input id="ux-line-dark" type="color"><div><label>Section / border line</label><input id="ux-line-dark-text" type="text" placeholder="#D8DBD0"></div></div>
+        <div class="field color-field"><input id="ux-ink" type="color"><div><label>Primary / sidebar</label><input id="ux-ink-text" type="text"></div></div>
+        <div class="field color-field"><input id="ux-paper" type="color"><div><label>Page background</label><input id="ux-paper-text" type="text"></div></div>
+        <div class="field color-field"><input id="ux-inkSoft" type="color"><div><label>Secondary text</label><input id="ux-inkSoft-text" type="text"></div></div>
+        <div class="field color-field"><input id="ux-gold" type="color"><div><label>Primary accent</label><input id="ux-gold-text" type="text"></div></div>
+        <div class="field color-field"><input id="ux-teal" type="color"><div><label>Secondary accent</label><input id="ux-teal-text" type="text"></div></div>
+        <div class="field color-field"><input id="ux-muted" type="color"><div><label>Muted text</label><input id="ux-muted-text" type="text"></div></div>
+        <div class="field color-field"><input id="ux-mutedDark" type="color"><div><label>Dark muted text</label><input id="ux-mutedDark-text" type="text"></div></div>
+        <div class="field color-field"><input id="ux-lineDark" type="color"><div><label>Section / border line</label><input id="ux-lineDark-text" type="text"></div></div>
       </div>
-      <div class="font-preview">
+
+      <div class="font-preview" id="ux-preview">
         <div class="preview-heading" id="ux-preview-heading">Portfolio preview</div>
         <div class="preview-body" id="ux-preview-body">This is how your selected typography will feel.</div>
       </div>
+
+      <div class="actions" style="margin-top:18px;">
+        <button id="save-uiux-btn">Save UI/UX</button>
+        <button class="secondary" id="restore-theme-btn">Restore Original Theme</button>
+      </div>
+      <div id="uiux-status" style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:.8rem;min-height:1.2em;"></div>
     </div>
 
     <div class="panel" id="visitors-panel">
@@ -467,9 +492,9 @@
     return {
       roleTitle: "Program Manager — Delivery & Governance",
       uiux: {
-        bodyFont: "Arial",
-        headingFont: "Arial",
-        monoFont: "Arial",
+        bodyFont: "Inter",
+        headingFont: "Space Grotesk",
+        monoFont: "IBM Plex Mono",
         colors: {
           ink: "#161B18",
           inkSoft: "#252B27",
@@ -532,10 +557,10 @@
   }
 
   // ---------- UI/UX controls ----------
-  const DEFAULT_UIUX = {
-    bodyFont: "Arial",
-    headingFont: "Arial",
-    monoFont: "Arial",
+  const ORIGINAL_UIUX = {
+    bodyFont: "Inter",
+    headingFont: "Space Grotesk",
+    monoFont: "IBM Plex Mono",
     colors: {
       ink: "#161B18",
       inkSoft: "#252B27",
@@ -548,66 +573,140 @@
     }
   };
 
+  const DEFAULT_UIUX = JSON.parse(JSON.stringify(ORIGINAL_UIUX));
+
   function normalizeUiux(){
+    const saved = (data && data.uiux) || {};
     data.uiux = {
-      ...DEFAULT_UIUX,
-      ...(data.uiux || {}),
-      colors: {...DEFAULT_UIUX.colors, ...((data.uiux || {}).colors || {})}
+      bodyFont: saved.bodyFont || DEFAULT_UIUX.bodyFont,
+      headingFont: saved.headingFont || DEFAULT_UIUX.headingFont,
+      monoFont: saved.monoFont || DEFAULT_UIUX.monoFont,
+      colors: {
+        ...DEFAULT_UIUX.colors,
+        ...(saved.colors || {})
+      }
     };
+  }
+
+  function setUiuxStatus(message, error=false){
+    const el = document.getElementById('uiux-status');
+    el.innerText = message || '';
+    el.style.color = error ? 'var(--danger)' : 'var(--teal)';
   }
 
   function renderUiux(){
     normalizeUiux();
     const u = data.uiux;
+
     document.getElementById('ux-body-font').value = u.bodyFont;
     document.getElementById('ux-heading-font').value = u.headingFont;
     document.getElementById('ux-mono-font').value = u.monoFont;
 
-    Object.keys(u.colors).forEach(key => {
+    Object.entries(u.colors).forEach(([key,value]) => {
       const picker = document.getElementById('ux-' + key);
       const text = document.getElementById('ux-' + key + '-text');
-      if (picker) picker.value = u.colors[key];
-      if (text) text.value = u.colors[key];
+      if (picker && /^#[0-9A-Fa-f]{6}$/.test(value)) picker.value = value;
+      if (text) text.value = value;
     });
+
     updateUiuxPreview();
   }
 
   function updateUiuxPreview(){
     const u = data.uiux || DEFAULT_UIUX;
     const c = u.colors || DEFAULT_UIUX.colors;
-    document.getElementById('ux-preview-heading').style.fontFamily = u.headingFont;
-    document.getElementById('ux-preview-body').style.fontFamily = u.bodyFont;
-    document.getElementById('ux-preview-heading').style.color = c.ink;
-    document.getElementById('ux-preview-body').style.color = c.inkSoft;
+    const heading = document.getElementById('ux-preview-heading');
+    const body = document.getElementById('ux-preview-body');
+    const preview = document.getElementById('ux-preview');
+
+    heading.style.fontFamily = `'${u.headingFont}', sans-serif`;
+    body.style.fontFamily = `'${u.bodyFont}', sans-serif`;
+    heading.style.color = c.ink;
+    body.style.color = c.inkSoft;
+    preview.style.background = c.paper;
+    preview.style.borderColor = c.lineDark;
   }
 
   function bindUiux(){
-    ['body','heading','mono'].forEach(type => {
-      document.getElementById('ux-' + type + '-font').addEventListener('change', e => {
-        data.uiux[type + 'Font'] = e.target.value;
-        updateUiuxPreview();
-      });
+    document.getElementById('ux-body-font').addEventListener('change', e => {
+      data.uiux.bodyFont = e.target.value;
+      updateUiuxPreview();
+    });
+
+    document.getElementById('ux-heading-font').addEventListener('change', e => {
+      data.uiux.headingFont = e.target.value;
+      updateUiuxPreview();
+    });
+
+    document.getElementById('ux-mono-font').addEventListener('change', e => {
+      data.uiux.monoFont = e.target.value;
+      updateUiuxPreview();
     });
 
     Object.keys(DEFAULT_UIUX.colors).forEach(key => {
       const picker = document.getElementById('ux-' + key);
       const text = document.getElementById('ux-' + key + '-text');
+
       picker.addEventListener('input', e => {
-        data.uiux.colors[key] = e.target.value;
-        text.value = e.target.value;
+        data.uiux.colors[key] = e.target.value.toUpperCase();
+        text.value = e.target.value.toUpperCase();
         updateUiuxPreview();
       });
-      text.addEventListener('input', e => {
-        const value = e.target.value.trim();
-        if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+
+      text.addEventListener('change', e => {
+        const value = e.target.value.trim().toUpperCase();
+        if (/^#[0-9A-F]{6}$/.test(value)) {
           data.uiux.colors[key] = value;
           picker.value = value;
           updateUiuxPreview();
+          setUiuxStatus('');
+        } else {
+          setUiuxStatus('Use a 6-digit HEX colour, e.g. #161B18.', true);
         }
       });
     });
   }
   bindUiux();
+
+  // Save only UI/UX using merge so existing content is never replaced.
+  document.getElementById('save-uiux-btn').onclick = async () => {
+    normalizeUiux();
+    const btn = document.getElementById('save-uiux-btn');
+    btn.disabled = true;
+    setUiuxStatus('Saving UI/UX…');
+
+    try {
+      await setDoc(docRef, { uiux: data.uiux }, { merge: true });
+      setUiuxStatus('UI/UX saved — refresh the public site to see the change.');
+    } catch (e) {
+      console.error(e);
+      setUiuxStatus('UI/UX save failed: ' + e.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  // Restore the exact original visual theme from the original index.html.
+  document.getElementById('restore-theme-btn').onclick = async () => {
+    if (!confirm('Restore the original portfolio theme? This changes only UI/UX settings.')) return;
+
+    data.uiux = JSON.parse(JSON.stringify(ORIGINAL_UIUX));
+    renderUiux();
+
+    const btn = document.getElementById('restore-theme-btn');
+    btn.disabled = true;
+    setUiuxStatus('Restoring original theme…');
+
+    try {
+      await setDoc(docRef, { uiux: data.uiux }, { merge: true });
+      setUiuxStatus('Original theme restored and saved.');
+    } catch (e) {
+      console.error(e);
+      setUiuxStatus('Restore failed: ' + e.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  };
 
   // ---------- render form from `data` ----------
   function renderForm(){
@@ -821,7 +920,8 @@
     syncTopFields();
     document.getElementById('save-msg').innerText = 'Saving…';
     try {
-      await setDoc(docRef, data);
+      normalizeUiux();
+      await setDoc(docRef, data, { merge: true });
       document.getElementById('save-msg').innerText = 'Saved — live on the site now.';
       setTimeout(() => document.getElementById('save-msg').innerText = '', 3000);
     } catch (e) {
