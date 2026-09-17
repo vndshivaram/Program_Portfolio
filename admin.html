@@ -80,6 +80,11 @@
   .font-preview .preview-heading{font-size:1.35rem;font-weight:600;margin-bottom:5px;}
   .font-preview .preview-body{font-size:.9rem;color:var(--muted-dark);}
   .section-note{padding:12px 14px;background:#F3F5EE;border-left:3px solid var(--teal);font-size:.8rem;color:var(--muted-dark);margin-bottom:20px;}
+  .theme-box{border:1px solid var(--line);padding:18px;margin-top:20px;background:#FAFAF6;}
+  .theme-list{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;}
+  .theme-list select{min-width:0;}
+  .theme-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .theme-note{font-size:.76rem;color:var(--muted-dark);margin-top:8px;}
   @media (max-width:760px){
     header.topbar{margin-left:0;}
     .admin-layout{grid-template-columns:1fr;}
@@ -101,6 +106,11 @@
   .font-preview .preview-heading{font-size:1.35rem;font-weight:600;margin-bottom:5px;}
   .font-preview .preview-body{font-size:.9rem;}
   .section-note{padding:12px 14px;background:#F3F5EE;border-left:3px solid var(--teal);font-size:.8rem;color:var(--muted-dark);margin-bottom:20px;}
+  .theme-box{border:1px solid var(--line);padding:18px;margin-top:20px;background:#FAFAF6;}
+  .theme-list{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;}
+  .theme-list select{min-width:0;}
+  .theme-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .theme-note{font-size:.76rem;color:var(--muted-dark);margin-top:8px;}
   @media (max-width:760px){.uiux-grid{grid-template-columns:1fr;}}
 
   #save-bar{
@@ -209,6 +219,39 @@
             <option value="Georgia">Georgia</option>
           </select>
         </div>
+        <div class="field">
+          <label>Body font size</label>
+          <select id="ux-body-size">
+            <option value="14px">14px — Small</option>
+            <option value="15px">15px — Compact</option>
+            <option value="16px">16px — Original</option>
+            <option value="17px">17px — Large</option>
+            <option value="18px">18px — Extra large</option>
+            <option value="20px">20px — Very large</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Heading size scale</label>
+          <select id="ux-heading-scale">
+            <option value="0.85">85% — Smaller</option>
+            <option value="0.95">95% — Slightly smaller</option>
+            <option value="1">100% — Original</option>
+            <option value="1.1">110% — Large</option>
+            <option value="1.2">120% — Extra large</option>
+            <option value="1.35">135% — Very large</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Mono / label size</label>
+          <select id="ux-mono-size">
+            <option value="0.65rem">0.65rem — Small</option>
+            <option value="0.7rem">0.70rem — Compact</option>
+            <option value="0.75rem">0.75rem — Original</option>
+            <option value="0.8rem">0.80rem — Large</option>
+            <option value="0.85rem">0.85rem — Extra large</option>
+            <option value="0.9rem">0.90rem — Very large</option>
+          </select>
+        </div>
       </div>
 
       <h3 style="font-size:.95rem;margin:20px 0 14px;">Colours</h3>
@@ -221,6 +264,30 @@
         <div class="field color-field"><input id="ux-muted" type="color"><div><label>Muted text</label><input id="ux-muted-text" type="text"></div></div>
         <div class="field color-field"><input id="ux-mutedDark" type="color"><div><label>Dark muted text</label><input id="ux-mutedDark-text" type="text"></div></div>
         <div class="field color-field"><input id="ux-lineDark" type="color"><div><label>Section / border line</label><input id="ux-lineDark-text" type="text"></div></div>
+      </div>
+
+
+      <div class="theme-box">
+        <h3 style="font-size:.95rem;margin-bottom:8px;">Saved Themes</h3>
+        <p class="hint" style="margin-bottom:12px;">Save your current UI/UX settings with a name. You can switch between saved themes later.</p>
+        <div class="row" style="margin-bottom:8px;">
+          <div class="field" style="margin-bottom:0;">
+            <label>New theme name</label>
+            <input id="ux-theme-name" placeholder="e.g. Executive Dark">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Saved themes</label>
+            <select id="ux-theme-select">
+              <option value="">No saved themes</option>
+            </select>
+          </div>
+        </div>
+        <div class="theme-actions">
+          <button class="secondary" id="save-theme-btn">Save Current as Theme</button>
+          <button class="secondary" id="apply-theme-btn">Apply Selected Theme</button>
+          <button class="danger" id="delete-theme-btn">Delete Selected Theme</button>
+        </div>
+        <div class="theme-note">Themes are saved inside the same Firebase portfolio document.</div>
       </div>
 
       <div class="font-preview" id="ux-preview">
@@ -549,8 +616,8 @@
         {title:"B.E., Computer Science", sub:"Visvesvaraya Technological University · Aug 2013 — Jun 2017"}
       ],
       certifications: [
-        {title:"Certified ScrumMaster (CSM)", sub:"Scrum Alliance, Inc. · Jun 2021 — Jun 2027"},
-        {title:"Introduction to GenAI for Business Process Automation", sub:"2025"}
+        {title:"Certified ScrumMaster (CSM)", sub:"Scrum Alliance, Inc. · Jun 2021 — Jun 2027", url:""},
+        {title:"Introduction to GenAI for Business Process Automation", sub:"2025", url:""}
       ],
       contact: {email:"vndshivaram@gmail.com", phone:"+91 80735 38346", linkedin:"https://www.linkedin.com/in/vinod-shivaram-146603135/", location:"Bengaluru, Karnataka, India"}
     };
@@ -561,6 +628,9 @@
     bodyFont: "Inter",
     headingFont: "Space Grotesk",
     monoFont: "IBM Plex Mono",
+    bodySize: "16px",
+    headingScale: 1,
+    monoSize: "0.75rem",
     colors: {
       ink: "#161B18",
       inkSoft: "#252B27",
@@ -581,6 +651,9 @@
       bodyFont: saved.bodyFont || DEFAULT_UIUX.bodyFont,
       headingFont: saved.headingFont || DEFAULT_UIUX.headingFont,
       monoFont: saved.monoFont || DEFAULT_UIUX.monoFont,
+      bodySize: saved.bodySize || DEFAULT_UIUX.bodySize,
+      headingScale: Number(saved.headingScale || DEFAULT_UIUX.headingScale),
+      monoSize: saved.monoSize || DEFAULT_UIUX.monoSize,
       colors: {
         ...DEFAULT_UIUX.colors,
         ...(saved.colors || {})
@@ -601,6 +674,10 @@
     document.getElementById('ux-body-font').value = u.bodyFont;
     document.getElementById('ux-heading-font').value = u.headingFont;
     document.getElementById('ux-mono-font').value = u.monoFont;
+    document.getElementById('ux-body-size').value = u.bodySize;
+    document.getElementById('ux-heading-scale').value = String(u.headingScale);
+    document.getElementById('ux-mono-size').value = u.monoSize;
+    renderThemeOptions();
 
     Object.entries(u.colors).forEach(([key,value]) => {
       const picker = document.getElementById('ux-' + key);
@@ -621,11 +698,29 @@
 
     heading.style.fontFamily = `'${u.headingFont}', sans-serif`;
     body.style.fontFamily = `'${u.bodyFont}', sans-serif`;
+    body.style.fontSize = u.bodySize || DEFAULT_UIUX.bodySize;
+    heading.style.fontSize = `calc(1.35rem * ${u.headingScale || 1})`;
     heading.style.color = c.ink;
     body.style.color = c.inkSoft;
     preview.style.background = c.paper;
     preview.style.borderColor = c.lineDark;
   }
+
+
+  document.getElementById('ux-body-size').addEventListener('change', e => {
+    data.uiux.bodySize = e.target.value;
+    updateUiuxPreview();
+  });
+
+  document.getElementById('ux-heading-scale').addEventListener('change', e => {
+    data.uiux.headingScale = Number(e.target.value);
+    updateUiuxPreview();
+  });
+
+  document.getElementById('ux-mono-size').addEventListener('change', e => {
+    data.uiux.monoSize = e.target.value;
+    updateUiuxPreview();
+  });
 
   function bindUiux(){
     document.getElementById('ux-body-font').addEventListener('change', e => {
@@ -668,6 +763,93 @@
   }
   bindUiux();
 
+
+  // ---------- saved themes ----------
+  function themeSnapshot(){
+    normalizeUiux();
+    return JSON.parse(JSON.stringify({
+      bodyFont: data.uiux.bodyFont,
+      headingFont: data.uiux.headingFont,
+      monoFont: data.uiux.monoFont,
+      bodySize: data.uiux.bodySize,
+      headingScale: data.uiux.headingScale,
+      monoSize: data.uiux.monoSize,
+      colors: data.uiux.colors
+    }));
+  }
+
+  function renderThemeOptions(){
+    const select = document.getElementById('ux-theme-select');
+    if (!select) return;
+    const themes = Array.isArray(data?.uiux?.themes) ? data.uiux.themes : [];
+    select.innerHTML = themes.length
+      ? themes.map((t,i) => `<option value="${i}">${escText(t.name || `Theme ${i+1}`)}</option>`).join('')
+      : '<option value="">No saved themes</option>';
+  }
+
+  document.getElementById('save-theme-btn').onclick = async () => {
+    normalizeUiux();
+    const nameEl = document.getElementById('ux-theme-name');
+    const name = nameEl.value.trim();
+    if (!name) {
+      setUiuxStatus('Enter a name for the theme first.', true);
+      return;
+    }
+    if (!Array.isArray(data.uiux.themes)) data.uiux.themes = [];
+    const existing = data.uiux.themes.findIndex(t => (t.name || '').toLowerCase() === name.toLowerCase());
+    const theme = { name, settings: themeSnapshot() };
+    if (existing >= 0) data.uiux.themes[existing] = theme;
+    else data.uiux.themes.push(theme);
+
+    try {
+      await setDoc(docRef, { uiux: data.uiux }, { merge: true });
+      renderThemeOptions();
+      document.getElementById('ux-theme-name').value = '';
+      setUiuxStatus(`Theme "${name}" saved.`);
+    } catch (e) {
+      setUiuxStatus('Theme save failed: ' + e.message, true);
+    }
+  };
+
+  document.getElementById('apply-theme-btn').onclick = () => {
+    const select = document.getElementById('ux-theme-select');
+    const idx = select.value;
+    if (idx === '') {
+      setUiuxStatus('Select a saved theme first.', true);
+      return;
+    }
+    const theme = data.uiux.themes?.[Number(idx)];
+    if (!theme?.settings) return;
+    const s = theme.settings;
+    data.uiux = {
+      ...data.uiux,
+      ...JSON.parse(JSON.stringify(s)),
+      themes: data.uiux.themes
+    };
+    renderUiux();
+    setUiuxStatus(`Theme "${theme.name}" applied. Click Save UI/UX to publish it.`);
+  };
+
+  document.getElementById('delete-theme-btn').onclick = async () => {
+    const select = document.getElementById('ux-theme-select');
+    const idx = select.value;
+    if (idx === '') {
+      setUiuxStatus('Select a saved theme first.', true);
+      return;
+    }
+    const theme = data.uiux.themes?.[Number(idx)];
+    if (!theme) return;
+    if (!confirm(`Delete saved theme "${theme.name}"?`)) return;
+    data.uiux.themes.splice(Number(idx), 1);
+    try {
+      await setDoc(docRef, { uiux: data.uiux }, { merge: true });
+      renderThemeOptions();
+      setUiuxStatus('Saved theme deleted.');
+    } catch (e) {
+      setUiuxStatus('Theme delete failed: ' + e.message, true);
+    }
+  };
+
   // Save only UI/UX using merge so existing content is never replaced.
   document.getElementById('save-uiux-btn').onclick = async () => {
     normalizeUiux();
@@ -690,7 +872,9 @@
   document.getElementById('restore-theme-btn').onclick = async () => {
     if (!confirm('Restore the original portfolio theme? This changes only UI/UX settings.')) return;
 
+    const savedThemes = Array.isArray(data.uiux?.themes) ? data.uiux.themes : [];
     data.uiux = JSON.parse(JSON.stringify(ORIGINAL_UIUX));
+    data.uiux.themes = savedThemes;
     renderUiux();
 
     const btn = document.getElementById('restore-theme-btn');
@@ -882,15 +1066,19 @@
       card.innerHTML = `
         <button class="danger rm">Remove</button>
         <div class="field"><label>Title</label><input class="li-title" value="${escAttr(item.title)}"></div>
-        <div class="field"><label>Subtitle</label><input class="li-sub" value="${escAttr(item.sub)}"></div>`;
+        <div class="field"><label>Subtitle</label><input class="li-sub" value="${escAttr(item.sub)}"></div>
+        ${key === 'certifications' ? `<div class="field"><label>Certificate URL</label><input class="li-url" type="url" placeholder="https://..." value="${escAttr(item.url || '')}"></div>` : ''}`;
       card.querySelector('.rm').onclick = () => { data[key].splice(i,1); renderList(containerId, data[key], fields, key); };
       card.querySelector('.li-title').oninput = e => item.title = e.target.value;
       card.querySelector('.li-sub').oninput = e => item.sub = e.target.value;
+      if (key === 'certifications') {
+        card.querySelector('.li-url').oninput = e => item.url = e.target.value;
+      }
       el.appendChild(card);
     });
   }
   document.getElementById('add-education').onclick = () => { data.education.push({title:'',sub:''}); renderList('education-list', data.education, [], 'education'); };
-  document.getElementById('add-cert').onclick = () => { data.certifications.push({title:'',sub:''}); renderList('certs-list', data.certifications, [], 'certifications'); };
+  document.getElementById('add-cert').onclick = () => { data.certifications.push({title:'',sub:'',url:''}); renderList('certs-list', data.certifications, [], 'certifications'); };
 
   // top-level field bindings
   ['f-roletitle','f-kicker','f-headline','f-sub','f-email','f-phone','f-linkedin','f-location'].forEach(id => {

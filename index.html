@@ -73,6 +73,8 @@
   .ed-item{border-top:1px solid var(--line-dark);padding-top:16px;margin-bottom:20px;}
   .ed-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1rem;}
   .ed-sub{color:var(--muted-dark);font-size:0.85rem;font-family:'IBM Plex Mono',monospace;margin-top:4px;}
+  .cert-link{color:var(--teal);text-decoration:underline;text-underline-offset:3px;}
+  .cert-link:hover{color:var(--gold);}
   #contact{background:var(--ink);color:var(--paper);max-width:none;padding:88px 64px;}
   @media (max-width:920px){#contact{padding:56px 24px;}}
   #contact .sec-head{color:var(--paper);}
@@ -183,6 +185,9 @@
     bodyFont: "Inter",
     headingFont: "Space Grotesk",
     monoFont: "IBM Plex Mono",
+    bodySize: "16px",
+    headingScale: 1,
+    monoSize: "0.75rem",
     colors: {
       ink: "#161B18",
       inkSoft: "#252B27",
@@ -300,11 +305,15 @@
     root.style.setProperty('--line', c.lineDark);
 
     document.body.style.fontFamily = `'${u.bodyFont}', sans-serif`;
+    document.body.style.fontSize = u.bodySize || '16px';
     document.querySelectorAll('h1,h2,h3,.display').forEach(el => {
       el.style.fontFamily = `'${u.headingFont}', sans-serif`;
+      el.style.transform = 'scale(' + (u.headingScale || 1) + ')';
+      el.style.transformOrigin = 'left center';
     });
     document.querySelectorAll('.mono,.sb-top .role,.role-when,.role-title,.project-tag,.skill-group-title,.ed-sub,.contact-links a,footer,.ledger-label').forEach(el => {
       el.style.fontFamily = `'${u.monoFont}', monospace`;
+      el.style.fontSize = u.monoSize || '0.75rem';
     });
 
     return u;
@@ -346,8 +355,13 @@
     document.getElementById('education-container').innerHTML = (data.education||[]).map(e => `
       <div class="ed-item"><div class="ed-title">${esc(e.title)}</div><div class="ed-sub">${esc(e.sub)}</div></div>`).join('');
 
-    document.getElementById('certs-container').innerHTML = (data.certifications||[]).map(e => `
-      <div class="ed-item"><div class="ed-title">${esc(e.title)}</div><div class="ed-sub">${esc(e.sub)}</div></div>`).join('');
+    document.getElementById('certs-container').innerHTML = (data.certifications||[]).map(e => {
+      const url = /^https?:\/\//i.test(e.url || '') ? e.url : '';
+      const titleHtml = url
+        ? `<a class="cert-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a>`
+        : esc(e.title);
+      return `<div class="ed-item"><div class="ed-title">${titleHtml}</div><div class="ed-sub">${esc(e.sub)}</div></div>`;
+    }).join('');
 
     const resumeWrap = document.getElementById('resume-btn-wrap');
     if (data.resumeDataUrl) {
@@ -416,6 +430,9 @@
           uiux: {
             ...ORIGINAL_UIUX,
             ...(live.uiux || {}),
+            bodySize: (live.uiux || {}).bodySize || ORIGINAL_UIUX.bodySize,
+            headingScale: Number((live.uiux || {}).headingScale || ORIGINAL_UIUX.headingScale),
+            monoSize: (live.uiux || {}).monoSize || ORIGINAL_UIUX.monoSize,
             colors: {...ORIGINAL_UIUX.colors, ...((live.uiux || {}).colors || {})}
           }
         };
