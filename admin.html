@@ -93,12 +93,16 @@
       <p class="hint">Logged automatically when someone loads your site. Shows the most recent 100 visits.</p>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
         <span id="visitor-count" class="mono" style="font-size:0.82rem;color:var(--teal);"></span>
-        <button class="secondary" id="refresh-visitors-btn">Refresh</button>
+        <div style="display:flex;gap:10px;">
+          <button class="danger" id="delete-visitors-btn" disabled>Delete selected</button>
+          <button class="secondary" id="refresh-visitors-btn">Refresh</button>
+        </div>
       </div>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
           <thead>
             <tr style="text-align:left;border-bottom:1px solid var(--line);">
+              <th style="padding:8px 6px;width:28px;"><input type="checkbox" id="select-all-visitors"></th>
               <th style="padding:8px 6px;">When</th>
               <th style="padding:8px 6px;">Location</th>
               <th style="padding:8px 6px;">Referrer</th>
@@ -195,7 +199,7 @@
      ============================================================ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -262,12 +266,16 @@
   async function loadVisitors(){
     const tbody = document.getElementById('visitors-tbody');
     const countEl = document.getElementById('visitor-count');
-    tbody.innerHTML = `<tr><td colspan="5" style="padding:10px 6px;color:var(--muted-dark);">Loading…</td></tr>`;
+    const selectAll = document.getElementById('select-all-visitors');
+    const deleteBtn = document.getElementById('delete-visitors-btn');
+    selectAll.checked = false;
+    deleteBtn.disabled = true;
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:10px 6px;color:var(--muted-dark);">Loading…</td></tr>`;
     try {
       const q = query(collection(db, 'visits'), orderBy('timestamp', 'desc'), limit(100));
       const snap = await getDocs(q);
       if (snap.empty) {
-        tbody.innerHTML = `<tr><td colspan="5" style="padding:10px 6px;color:var(--muted-dark);">No visits logged yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:10px 6px;color:var(--muted-dark);">No visits logged yet.</td></tr>`;
         countEl.innerText = '0 visits';
         return;
       }
@@ -278,6 +286,7 @@
         const loc = [v.city, v.region, v.country].filter(Boolean).join(', ') || '—';
         const ref = v.referrer && v.referrer !== 'direct' ? v.referrer : 'Direct';
         return `<tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 6px;"><input type="checkbox" class="visitor-check" data-id="${d.id}"></td>
           <td style="padding:8px 6px;white-space:nowrap;">${escText(fmtTime(v.timestamp))}</td>
           <td style="padding:8px 6px;">${escText(loc)}</td>
           <td style="padding:8px 6px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escText(ref)}</td>
@@ -285,11 +294,40 @@
           <td style="padding:8px 6px;">${escText(device)}</td>
         </tr>`;
       }).join('');
+      document.querySelectorAll('.visitor-check').forEach(cb => cb.addEventListener('change', updateDeleteBtnState));
     } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="5" style="padding:10px 6px;color:var(--danger);">Couldn't load visits: ${escText(e.message)}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="padding:10px 6px;color:var(--danger);">Couldn't load visits: ${escText(e.message)}</td></tr>`;
     }
   }
   document.getElementById('refresh-visitors-btn').onclick = loadVisitors;
+
+  function updateDeleteBtnState(){
+    const anyChecked = document.querySelectorAll('.visitor-check:checked').length > 0;
+    document.getElementById('delete-visitors-btn').disabled = !anyChecked;
+  }
+
+  document.getElementById('select-all-visitors').onchange = (e) => {
+    document.querySelectorAll('.visitor-check').forEach(cb => cb.checked = e.target.checked);
+    updateDeleteBtnState();
+  };
+
+  document.getElementById('delete-visitors-btn').onclick = async () => {
+    const ids = Array.from(document.querySelectorAll('.visitor-check:checked')).map(cb => cb.dataset.id);
+    if (ids.length === 0) return;
+    if (!confirm(`Delete ${ids.length} visit log${ids.length===1?'':'s'}? This can't be undone.`)) return;
+    const deleteBtn = document.getElementById('delete-visitors-btn');
+    deleteBtn.disabled = true;
+    deleteBtn.innerText = 'Deleting…';
+    try {
+      for (const id of ids) {
+        await deleteDoc(doc(db, 'visits', id));
+      }
+    } catch (e) {
+      alert('Some entries failed to delete: ' + e.message);
+    }
+    deleteBtn.innerText = 'Delete selected';
+    await loadVisitors();
+  };
 
   // ---------- data load ----------
   async function loadData(){
