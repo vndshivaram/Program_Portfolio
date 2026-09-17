@@ -164,7 +164,7 @@
      ============================================================ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { getFirestore, doc, onSnapshot, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBXjfsa3o4TrjxrfjeGMEk6hHB1RDBlFQo",
@@ -296,6 +296,29 @@
 
   // render fallback immediately so the page is never blank
   render(fallback);
+
+  // log this visit (best-effort — never blocks or breaks the page if it fails)
+  (async function logVisit(){
+    try {
+      let geo = {};
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        if (res.ok) {
+          const g = await res.json();
+          geo = { city: g.city || '', region: g.region || '', country: g.country_name || '', ip: g.ip || '' };
+        }
+      } catch (e) { /* geolocation lookup is optional; ignore failures */ }
+
+      await addDoc(collection(db, "visits"), {
+        timestamp: serverTimestamp(),
+        referrer: document.referrer || "direct",
+        userAgent: navigator.userAgent,
+        language: navigator.language || "",
+        path: location.pathname,
+        ...geo
+      });
+    } catch (e) { console.warn("Visit logging skipped:", e); }
+  })();
 
   // then subscribe to live data — updates the instant the admin panel saves
   try {

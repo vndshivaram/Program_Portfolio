@@ -89,6 +89,29 @@
   <div id="wrap">
 
     <div class="panel">
+      <h2>Visitors</h2>
+      <p class="hint">Logged automatically when someone loads your site. Shows the most recent 100 visits.</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <span id="visitor-count" class="mono" style="font-size:0.82rem;color:var(--teal);"></span>
+        <button class="secondary" id="refresh-visitors-btn">Refresh</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--line);">
+              <th style="padding:8px 6px;">When</th>
+              <th style="padding:8px 6px;">Location</th>
+              <th style="padding:8px 6px;">Referrer</th>
+              <th style="padding:8px 6px;">Browser</th>
+              <th style="padding:8px 6px;">Device</th>
+            </tr>
+          </thead>
+          <tbody id="visitors-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
       <h2>Hero</h2>
       <p class="hint">The top of the page — headline and the four highlight stats.</p>
       <div class="field"><label>Role title (shown in sidebar)</label><input id="f-roletitle"></div>
@@ -172,7 +195,7 @@
      ============================================================ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -211,11 +234,62 @@
       document.getElementById('admin-screen').style.display = 'block';
       document.getElementById('who').innerText = user.email;
       await loadData();
+      await loadVisitors();
     } else {
       document.getElementById('login-screen').style.display = 'flex';
       document.getElementById('admin-screen').style.display = 'none';
     }
   });
+
+  // ---------- visitors ----------
+  function parseUA(ua){
+    ua = ua || '';
+    let browser = 'Unknown';
+    if (/Edg\//.test(ua)) browser = 'Edge';
+    else if (/Chrome\//.test(ua) && !/Chromium/.test(ua)) browser = 'Chrome';
+    else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) browser = 'Safari';
+    else if (/Firefox\//.test(ua)) browser = 'Firefox';
+    const device = /Mobile|Android|iPhone/.test(ua) ? 'Mobile' : (/iPad|Tablet/.test(ua) ? 'Tablet' : 'Desktop');
+    return { browser, device };
+  }
+
+  function fmtTime(ts){
+    if (!ts || !ts.toDate) return '—';
+    const d = ts.toDate();
+    return d.toLocaleString();
+  }
+
+  async function loadVisitors(){
+    const tbody = document.getElementById('visitors-tbody');
+    const countEl = document.getElementById('visitor-count');
+    tbody.innerHTML = `<tr><td colspan="5" style="padding:10px 6px;color:var(--muted-dark);">Loading…</td></tr>`;
+    try {
+      const q = query(collection(db, 'visits'), orderBy('timestamp', 'desc'), limit(100));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:10px 6px;color:var(--muted-dark);">No visits logged yet.</td></tr>`;
+        countEl.innerText = '0 visits';
+        return;
+      }
+      countEl.innerText = `${snap.size} most recent visit${snap.size===1?'':'s'}`;
+      tbody.innerHTML = snap.docs.map(d => {
+        const v = d.data();
+        const { browser, device } = parseUA(v.userAgent);
+        const loc = [v.city, v.region, v.country].filter(Boolean).join(', ') || '—';
+        const ref = v.referrer && v.referrer !== 'direct' ? v.referrer : 'Direct';
+        return `<tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 6px;white-space:nowrap;">${escText(fmtTime(v.timestamp))}</td>
+          <td style="padding:8px 6px;">${escText(loc)}</td>
+          <td style="padding:8px 6px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escText(ref)}</td>
+          <td style="padding:8px 6px;">${escText(browser)}</td>
+          <td style="padding:8px 6px;">${escText(device)}</td>
+        </tr>`;
+      }).join('');
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="5" style="padding:10px 6px;color:var(--danger);">Couldn't load visits: ${escText(e.message)}</td></tr>`;
+    }
+  }
+  document.getElementById('refresh-visitors-btn').onclick = loadVisitors;
 
   // ---------- data load ----------
   async function loadData(){
