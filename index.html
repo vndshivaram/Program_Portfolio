@@ -13,9 +13,6 @@
     --gold:#D9A441; --teal:#3F6E64; --muted:#8B9187; --muted-dark:#6B7268;
     --line:rgba(255,255,255,0.12); --line-dark:rgba(22,27,24,0.14);
   }
-  main {
-  text-align: none;
-}
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.55;font-size:16px;}
@@ -37,13 +34,13 @@
   .sb-bottom a{color:var(--paper);border-bottom:1px solid var(--line);}
   .sb-bottom a:hover{border-bottom-color:var(--gold);color:var(--gold);}
   main{padding:0;}
-  section{padding:20px 32px;border-bottom:1px solid var(--line-dark);max-width:none;}
+  section{padding:88px 64px;border-bottom:1px solid var(--line-dark);max-width:900px;}
   @media (max-width:920px){section{padding:56px 24px;}}
   section:last-of-type{border-bottom:none;}
   .kicker{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--teal);margin-bottom:14px;}
   #hero{padding-top:64px;}
-  .hero-head{font-size:clamp(2.1rem,4vw,3.2rem);line-height:1;max-width:none;margin-bottom:32px;}
-  .hero-sub{max-width:none;color:var(--ink-soft);font-size:1.05rem;margin-bottom:25px;text-align:justify;}
+  .hero-head{font-size:clamp(2.1rem,4vw,3.2rem);line-height:1.12;max-width:16ch;margin-bottom:22px;}
+  .hero-sub{max-width:62ch;color:var(--ink-soft);font-size:1.05rem;margin-bottom:44px;}
   .ledger{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-dark);border-left:1px solid var(--line-dark);}
   @media (max-width:700px){.ledger{grid-template-columns:repeat(2,1fr);}}
   .ledger-cell{border-right:1px solid var(--line-dark);border-bottom:1px solid var(--line-dark);padding:20px 18px;}
@@ -78,6 +75,8 @@
   .ed-sub{color:var(--muted-dark);font-size:0.85rem;font-family:'IBM Plex Mono',monospace;margin-top:4px;}
   .cert-link{color:var(--teal);text-decoration:underline;text-underline-offset:3px;}
   .cert-link:hover{color:var(--gold);}
+  .profile-picture{width:150px;height:150px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);margin-bottom:22px;display:block;}
+
   #contact{background:var(--ink);color:var(--paper);max-width:none;padding:88px 64px;}
   @media (max-width:920px){#contact{padding:56px 24px;}}
   #contact .sec-head{color:var(--paper);}
@@ -100,8 +99,9 @@
 <div class="shell">
   <aside class="sidebar">
     <div class="sb-top">
+      <div id="profile-picture-wrap"></div>
       <div class="name">Vinod Shivaram</div>
-      <div class="role" id="sb-role">Program Manager</div>
+      <div class="role" id="sb-role">Program Manager — Delivery &amp; Governance</div>
       <nav class="sb-nav" id="sbnav">
         <a href="#hero">Overview</a>
         <a href="#experience">Experience</a>
@@ -127,26 +127,26 @@
     </section>
 
     <section id="experience">
-     <!-- <div class="kicker"> </div> -->
+      <div class="kicker">Experience</div>
       <h2 class="sec-head">Experience</h2>
-      <p class="sec-intro">.</p>
+      <p class="sec-intro">Career history, most recent first.</p>
       <div id="roles-container"></div>
     </section>
 
     <section id="projects">
-    <!--  <div class="kicker"> </div> -->
+      <div class="kicker">Selected work</div>
       <h2 class="sec-head">Projects</h2>
       <div class="projects" id="projects-container"></div>
     </section>
 
     <section id="skills">
-      <div class="kicker"> </div>
+      <div class="kicker">Toolkit</div>
       <h2 class="sec-head">Skills</h2>
       <div class="skill-grid" id="skills-container"></div>
     </section>
 
     <section id="education">
-      <div class="kicker"> </div>
+      <div class="kicker">Background</div>
       <h2 class="sec-head">Education &amp; Certifications</h2>
       <div class="ed-grid">
         <div id="education-container"></div>
@@ -156,7 +156,7 @@
 
     <section id="contact">
       <div class="kicker" style="color:var(--gold);">Get in touch</div>
-      <h2 class="sec-head">I’d be happy to connect and discuss how my experience aligns with your requirements.</h2>
+      <h2 class="sec-head">Let's talk about your next program</h2>
       <p class="sec-intro">Based in <span id="contact-loc"></span>.</p>
       <div class="contact-links" id="contact-links"></div>
       <footer>Vinod Shivaram — Program Manager</footer>
@@ -191,6 +191,7 @@
     bodySize: "16px",
     headingScale: 1,
     monoSize: "0.75rem",
+    imageDataUrl: "",
     colors: {
       ink: "#161B18",
       inkSoft: "#252B27",
@@ -323,7 +324,14 @@
   }
 
   function render(data){
-    applyUiux(data.uiux);
+    const appliedUiux = applyUiux(data.uiux);
+    const profileWrap = document.getElementById('profile-picture-wrap');
+    if (profileWrap) {
+      const img = appliedUiux.imageDataUrl || '';
+      profileWrap.innerHTML = img
+        ? `<img class="profile-picture" src="${esc(img)}" alt="Vinod Shivaram">`
+        : '';
+    }
     document.getElementById('sb-role').innerText = data.roleTitle || fallback.roleTitle;
     document.getElementById('hero-kicker').innerText = data.hero?.kicker || '';
     document.getElementById('hero-headline').innerText = data.hero?.headline || '';
