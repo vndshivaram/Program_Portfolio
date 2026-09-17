@@ -85,12 +85,6 @@
   .theme-list select{min-width:0;}
   .theme-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
   .theme-note{font-size:.76rem;color:var(--muted-dark);margin-top:8px;}
-  .profile-upload{display:grid;grid-template-columns:110px 1fr;gap:18px;align-items:center;margin-top:16px;}
-  .profile-preview{width:110px;height:110px;border:1px solid var(--line);background:#F3F5EE;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  .profile-preview img{width:100%;height:100%;object-fit:cover;}
-  .profile-empty{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--muted-dark);text-align:center;padding:10px;}
-  @media(max-width:640px){.profile-upload{grid-template-columns:1fr;}}
-
   @media (max-width:760px){
     header.topbar{margin-left:0;}
     .admin-layout{grid-template-columns:1fr;}
@@ -257,23 +251,6 @@
             <option value="0.85rem">0.85rem — Extra large</option>
             <option value="0.9rem">0.90rem — Very large</option>
           </select>
-        </div>
-      </div>
-
-      <h3 style="font-size:.95rem;margin:20px 0 14px;">Profile Picture</h3>
-      <div class="profile-upload">
-        <div class="profile-preview" id="profile-preview"><div class="profile-empty">No image</div></div>
-        <div>
-          <div class="field">
-            <label>Upload JPG / JPEG</label>
-            <input type="file" id="profile-image-file" accept="image/jpeg,.jpg,.jpeg">
-          </div>
-          <div class="actions">
-            <button class="secondary" id="profile-image-upload-btn">Upload Picture</button>
-            <button class="danger" id="profile-image-remove-btn">Remove Picture</button>
-          </div>
-          <div id="profile-image-status" style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:.8rem;"></div>
-          <div class="theme-note">Recommended: square JPG/JPEG. Maximum 500 KB. The image is stored with the portfolio data in Firebase.</div>
         </div>
       </div>
 
@@ -654,7 +631,6 @@
     bodySize: "16px",
     headingScale: 1,
     monoSize: "0.75rem",
-    imageDataUrl: "",
     colors: {
       ink: "#161B18",
       inkSoft: "#252B27",
@@ -681,8 +657,7 @@
       colors: {
         ...DEFAULT_UIUX.colors,
         ...(saved.colors || {})
-      },
-      themes: Array.isArray(saved.themes) ? saved.themes : []
+      }
     };
   }
 
@@ -703,7 +678,6 @@
     document.getElementById('ux-heading-scale').value = String(u.headingScale);
     document.getElementById('ux-mono-size').value = u.monoSize;
     renderThemeOptions();
-    renderProfileImage();
 
     Object.entries(u.colors).forEach(([key,value]) => {
       const picker = document.getElementById('ux-' + key);
@@ -789,64 +763,6 @@
   }
   bindUiux();
 
-
-  // ---------- profile picture ----------
-  const MAX_PROFILE_IMAGE_BYTES = 500 * 1024;
-
-  function renderProfileImage(){
-    const box = document.getElementById('profile-preview');
-    if (!box) return;
-    const src = data.uiux?.imageDataUrl || '';
-    box.innerHTML = src
-      ? `<img src="${escAttr(src)}" alt="Profile picture preview">`
-      : `<div class="profile-empty">No image</div>`;
-  }
-
-  document.getElementById('profile-image-upload-btn').onclick = async () => {
-    const input = document.getElementById('profile-image-file');
-    const status = document.getElementById('profile-image-status');
-    const file = input.files[0];
-    if (!file) { status.style.color='var(--danger)'; status.innerText='Choose a JPG/JPEG file first.'; return; }
-    if (!['image/jpeg'].includes(file.type) && !/\.jpe?g$/i.test(file.name)) {
-      status.style.color='var(--danger)'; status.innerText='Please choose a JPG/JPEG image.'; return;
-    }
-    if (file.size > MAX_PROFILE_IMAGE_BYTES) {
-      status.style.color='var(--danger)';
-      status.innerText=`Image is ${Math.round(file.size/1024)} KB — please use one under 500 KB.`;
-      return;
-    }
-    status.style.color='var(--teal)';
-    status.innerText='Uploading…';
-    const reader=new FileReader();
-    reader.onload=async()=>{
-      try{
-        data.uiux.imageDataUrl=reader.result;
-        await setDoc(docRef,{uiux:data.uiux},{merge:true});
-        renderProfileImage();
-        input.value='';
-        status.innerText='Picture uploaded — live on the site now.';
-      }catch(e){
-        status.style.color='var(--danger)';
-        status.innerText='Upload failed: '+e.message;
-      }
-    };
-    reader.onerror=()=>{status.style.color='var(--danger)';status.innerText='Could not read that image.';};
-    reader.readAsDataURL(file);
-  };
-
-  document.getElementById('profile-image-remove-btn').onclick = async () => {
-    if (!data.uiux?.imageDataUrl) return;
-    const status=document.getElementById('profile-image-status');
-    status.style.color='var(--teal)'; status.innerText='Removing…';
-    try{
-      data.uiux.imageDataUrl='';
-      await setDoc(docRef,{uiux:data.uiux},{merge:true});
-      renderProfileImage();
-      status.innerText='Picture removed.';
-    }catch(e){
-      status.style.color='var(--danger)'; status.innerText='Remove failed: '+e.message;
-    }
-  };
 
   // ---------- saved themes ----------
   function themeSnapshot(){
@@ -957,10 +873,8 @@
     if (!confirm('Restore the original portfolio theme? This changes only UI/UX settings.')) return;
 
     const savedThemes = Array.isArray(data.uiux?.themes) ? data.uiux.themes : [];
-    const savedImage = data.uiux?.imageDataUrl || '';
     data.uiux = JSON.parse(JSON.stringify(ORIGINAL_UIUX));
     data.uiux.themes = savedThemes;
-    data.uiux.imageDataUrl = savedImage;
     renderUiux();
 
     const btn = document.getElementById('restore-theme-btn');

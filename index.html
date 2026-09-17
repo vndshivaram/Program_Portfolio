@@ -75,8 +75,6 @@
   .ed-sub{color:var(--muted-dark);font-size:0.85rem;font-family:'IBM Plex Mono',monospace;margin-top:4px;}
   .cert-link{color:var(--teal);text-decoration:underline;text-underline-offset:3px;}
   .cert-link:hover{color:var(--gold);}
-  .profile-picture{width:150px;height:150px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);margin-bottom:22px;display:block;}
-
   #contact{background:var(--ink);color:var(--paper);max-width:none;padding:88px 64px;}
   @media (max-width:920px){#contact{padding:56px 24px;}}
   #contact .sec-head{color:var(--paper);}
@@ -99,7 +97,6 @@
 <div class="shell">
   <aside class="sidebar">
     <div class="sb-top">
-      <div id="profile-picture-wrap"></div>
       <div class="name">Vinod Shivaram</div>
       <div class="role" id="sb-role">Program Manager — Delivery &amp; Governance</div>
       <nav class="sb-nav" id="sbnav">
@@ -191,7 +188,6 @@
     bodySize: "16px",
     headingScale: 1,
     monoSize: "0.75rem",
-    imageDataUrl: "",
     colors: {
       ink: "#161B18",
       inkSoft: "#252B27",
@@ -324,14 +320,7 @@
   }
 
   function render(data){
-    const appliedUiux = applyUiux(data.uiux);
-    const profileWrap = document.getElementById('profile-picture-wrap');
-    if (profileWrap) {
-      const img = appliedUiux.imageDataUrl || '';
-      profileWrap.innerHTML = img
-        ? `<img class="profile-picture" src="${esc(img)}" alt="Vinod Shivaram">`
-        : '';
-    }
+    applyUiux(data.uiux);
     document.getElementById('sb-role').innerText = data.roleTitle || fallback.roleTitle;
     document.getElementById('hero-kicker').innerText = data.hero?.kicker || '';
     document.getElementById('hero-headline').innerText = data.hero?.headline || '';
