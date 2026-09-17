@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin — Vinod Shivaram Portfolio</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#161B18; --ink-soft:#252B27; --paper:#EEF0E9; --card:#FFFFFF;
@@ -41,12 +41,29 @@
   #admin-screen{display:none;}
   header.topbar{
     background:var(--ink);color:var(--paper);padding:18px 32px;
-    display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;
+    display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;
+    margin-left:230px;
   }
   header.topbar .title{font-family:'Space Grotesk',sans-serif;font-weight:600;}
   header.topbar .status{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--gold);}
+  .admin-layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 65px);}
+  .admin-sidebar{
+    position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto;
+    background:#1E2420;color:var(--paper);padding:28px 18px;border-right:1px solid #303832;
+  }
+  .admin-sidebar .nav-label{
+    font-family:'IBM Plex Mono',monospace;font-size:0.68rem;text-transform:uppercase;
+    letter-spacing:.08em;color:#8B9187;margin:0 10px 10px;
+  }
+  .admin-sidebar .nav-group{margin-bottom:26px;}
+  .admin-sidebar a{
+    display:block;color:#B9BEB6;text-decoration:none;padding:9px 10px;margin:2px 0;
+    border-left:2px solid transparent;font-size:.88rem;border-radius:2px;
+  }
+  .admin-sidebar a:hover,.admin-sidebar a.active{color:#EEF0E9;background:#252C28;border-left-color:var(--gold);}
+  .admin-main{min-width:0;}
   #wrap{max-width:900px;margin:0 auto;padding:40px 24px 100px;}
-  .panel{background:var(--card);border:1px solid var(--line);padding:28px;margin-bottom:28px;}
+  .panel{background:var(--card);border:1px solid var(--line);padding:28px;margin-bottom:28px;scroll-margin-top:90px;}
   .panel h2{font-size:1.15rem;margin-bottom:6px;}
   .panel .hint{color:var(--muted-dark);font-size:0.82rem;margin-bottom:20px;}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
@@ -56,6 +73,22 @@
   .item-card .rm{position:absolute;top:12px;right:12px;}
   .stats-row{display:grid;grid-template-columns:1fr 3fr auto;gap:10px;margin-bottom:10px;align-items:end;}
   .actions{display:flex;gap:10px;margin-top:10px;}
+  .uiux-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;}
+  .color-field{display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:center;}
+  .color-field input[type="color"]{height:42px;padding:3px;cursor:pointer;}
+  .font-preview{padding:14px;border:1px dashed var(--line);background:#FAFAF6;margin-top:16px;}
+  .font-preview .preview-heading{font-size:1.35rem;font-weight:600;margin-bottom:5px;}
+  .font-preview .preview-body{font-size:.9rem;color:var(--muted-dark);}
+  .section-note{padding:12px 14px;background:#F3F5EE;border-left:3px solid var(--teal);font-size:.8rem;color:var(--muted-dark);margin-bottom:20px;}
+  @media (max-width:760px){
+    header.topbar{margin-left:0;}
+    .admin-layout{grid-template-columns:1fr;}
+    .admin-sidebar{position:relative;top:0;height:auto;display:flex;gap:18px;overflow-x:auto;padding:14px 18px;white-space:nowrap;}
+    .admin-sidebar .nav-group{display:flex;align-items:center;gap:4px;margin:0;}
+    .admin-sidebar .nav-label{margin:0 8px 0 0;}
+    .uiux-grid{grid-template-columns:1fr;}
+  }
+
   #save-bar{
     position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);
     padding:16px 24px;display:flex;justify-content:space-between;align-items:center;
@@ -86,9 +119,98 @@
     </div>
   </header>
 
-  <div id="wrap">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="nav-group">
+        <div class="nav-label">Dashboard</div>
+        <a href="#visitors-panel">Visitors</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Settings</div>
+        <a href="#uiux-panel" class="active">UI/UX</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Content</div>
+        <a href="#hero-panel">Hero</a>
+        <a href="#resume-panel">Resume</a>
+        <a href="#experience-panel">Experience</a>
+        <a href="#projects-panel">Projects</a>
+        <a href="#skills-panel">Skills</a>
+        <a href="#education-panel">Education</a>
+        <a href="#certifications-panel">Certifications</a>
+        <a href="#contact-panel">Contact</a>
+      </div>
+    </aside>
 
-    <div class="panel">
+    <main class="admin-main">
+    <div id="wrap">
+
+    <div class="panel" id="uiux-panel">
+      <h2>UI/UX</h2>
+      <p class="hint">Control the visual style of the public portfolio without editing the HTML. Changes are saved to Firebase and applied live after saving.</p>
+      <div class="section-note">Choose the fonts and colours you want. The three font controls affect body text, headings, and monospaced labels/buttons independently.</div>
+
+      <h3 style="font-size:.95rem;margin-bottom:14px;">Fonts</h3>
+      <div class="uiux-grid">
+        <div class="field">
+          <label>Body font</label>
+          <select id="ux-body-font">
+            <option value="Arial">Arial</option>
+            <option value="Inter">Inter</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Trebuchet MS">Trebuchet MS</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Caveat">Caveat</option>
+            <option value="Space Grotesk">Space Grotesk</option>
+            <option value="IBM Plex Mono">IBM Plex Mono</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Heading font</label>
+          <select id="ux-heading-font">
+            <option value="Arial">Arial</option>
+            <option value="Inter">Inter</option>
+            <option value="Space Grotesk">Space Grotesk</option>
+            <option value="Caveat">Caveat</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Trebuchet MS">Trebuchet MS</option>
+            <option value="IBM Plex Mono">IBM Plex Mono</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Mono / label font</label>
+          <select id="ux-mono-font">
+            <option value="IBM Plex Mono">IBM Plex Mono</option>
+            <option value="Arial">Arial</option>
+            <option value="Inter">Inter</option>
+            <option value="Space Grotesk">Space Grotesk</option>
+            <option value="Caveat">Caveat</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Trebuchet MS">Trebuchet MS</option>
+            <option value="Georgia">Georgia</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 style="font-size:.95rem;margin:20px 0 14px;">Colours</h3>
+      <div class="uiux-grid">
+        <div class="field color-field"><input id="ux-ink" type="color"><div><label>Primary / sidebar</label><input id="ux-ink-text" type="text" placeholder="#161B18"></div></div>
+        <div class="field color-field"><input id="ux-paper" type="color"><div><label>Page background</label><input id="ux-paper-text" type="text" placeholder="#EEF0E9"></div></div>
+        <div class="field color-field"><input id="ux-ink-soft" type="color"><div><label>Secondary text</label><input id="ux-ink-soft-text" type="text" placeholder="#252B27"></div></div>
+        <div class="field color-field"><input id="ux-gold" type="color"><div><label>Primary accent</label><input id="ux-gold-text" type="text" placeholder="#D9A441"></div></div>
+        <div class="field color-field"><input id="ux-teal" type="color"><div><label>Secondary accent</label><input id="ux-teal-text" type="text" placeholder="#3F6E64"></div></div>
+        <div class="field color-field"><input id="ux-muted" type="color"><div><label>Muted text</label><input id="ux-muted-text" type="text" placeholder="#8B9187"></div></div>
+        <div class="field color-field"><input id="ux-muted-dark" type="color"><div><label>Dark muted text</label><input id="ux-muted-dark-text" type="text" placeholder="#6B7268"></div></div>
+        <div class="field color-field"><input id="ux-line-dark" type="color"><div><label>Section / border line</label><input id="ux-line-dark-text" type="text" placeholder="#D8DBD0"></div></div>
+      </div>
+      <div class="font-preview">
+        <div class="preview-heading" id="ux-preview-heading">Portfolio preview</div>
+        <div class="preview-body" id="ux-preview-body">This is how your selected typography will feel.</div>
+      </div>
+    </div>
+
+    <div class="panel" id="visitors-panel">
       <h2>Visitors</h2>
       <p class="hint">Logged automatically when someone loads your site. Shows the most recent 100 visits.</p>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
@@ -115,7 +237,7 @@
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="hero-panel">
       <h2>Hero</h2>
       <p class="hint">The top of the page — headline and the four highlight stats.</p>
       <div class="field"><label>Role title (shown in sidebar)</label><input id="f-roletitle"></div>
@@ -127,7 +249,7 @@
       <div class="actions"><button class="secondary" id="add-stat">+ Add stat</button></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="resume-panel">
       <h2>Resume PDF</h2>
       <p class="hint">Upload a PDF (under 700 KB) to show a "Download resume" button on the site. Uploading a new file replaces the old one.</p>
       <div id="resume-current" style="margin-bottom:14px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;"></div>
@@ -139,39 +261,39 @@
       <div id="resume-status" style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--teal);"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="experience-panel">
       <h2>Experience</h2>
       <p class="hint">One card per role. Bullets: one per line.</p>
       <div id="roles-list"></div>
       <div class="actions"><button class="secondary" id="add-role">+ Add role</button></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="projects-panel">
       <h2>Projects</h2>
       <div id="projects-list"></div>
       <div class="actions"><button class="secondary" id="add-project">+ Add project</button></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="skills-panel">
       <h2>Skills</h2>
       <p class="hint">Tags: comma-separated.</p>
       <div id="skills-list"></div>
       <div class="actions"><button class="secondary" id="add-skillgroup">+ Add skill group</button></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="education-panel">
       <h2>Education</h2>
       <div id="education-list"></div>
       <div class="actions"><button class="secondary" id="add-education">+ Add entry</button></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="certifications-panel">
       <h2>Certifications</h2>
       <div id="certs-list"></div>
       <div class="actions"><button class="secondary" id="add-cert">+ Add entry</button></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="contact-panel">
       <h2>Contact</h2>
       <div class="row">
         <div class="field"><label>Email</label><input id="f-email"></div>
@@ -182,7 +304,7 @@
         <div class="field"><label>Location</label><input id="f-location"></div>
       </div>
     </div>
-
+    </main>
   </div>
 
   <div id="save-bar">
@@ -344,6 +466,21 @@
     // Seed with the original resume content so the first Save populates Firestore correctly.
     return {
       roleTitle: "Program Manager — Delivery & Governance",
+      uiux: {
+        bodyFont: "Arial",
+        headingFont: "Arial",
+        monoFont: "Arial",
+        colors: {
+          ink: "#161B18",
+          inkSoft: "#252B27",
+          paper: "#EEF0E9",
+          gold: "#D9A441",
+          teal: "#3F6E64",
+          muted: "#8B9187",
+          mutedDark: "#6B7268",
+          lineDark: "#D8DBD0"
+        }
+      },
       hero: {
         kicker: "Program governance / delivery leadership",
         headline: "Ships releases on schedule. Even when the schedule is fighting back.",
@@ -394,8 +531,87 @@
     };
   }
 
+  // ---------- UI/UX controls ----------
+  const DEFAULT_UIUX = {
+    bodyFont: "Arial",
+    headingFont: "Arial",
+    monoFont: "Arial",
+    colors: {
+      ink: "#161B18",
+      inkSoft: "#252B27",
+      paper: "#EEF0E9",
+      gold: "#D9A441",
+      teal: "#3F6E64",
+      muted: "#8B9187",
+      mutedDark: "#6B7268",
+      lineDark: "#D8DBD0"
+    }
+  };
+
+  function normalizeUiux(){
+    data.uiux = {
+      ...DEFAULT_UIUX,
+      ...(data.uiux || {}),
+      colors: {...DEFAULT_UIUX.colors, ...((data.uiux || {}).colors || {})}
+    };
+  }
+
+  function renderUiux(){
+    normalizeUiux();
+    const u = data.uiux;
+    document.getElementById('ux-body-font').value = u.bodyFont;
+    document.getElementById('ux-heading-font').value = u.headingFont;
+    document.getElementById('ux-mono-font').value = u.monoFont;
+
+    Object.keys(u.colors).forEach(key => {
+      const picker = document.getElementById('ux-' + key);
+      const text = document.getElementById('ux-' + key + '-text');
+      if (picker) picker.value = u.colors[key];
+      if (text) text.value = u.colors[key];
+    });
+    updateUiuxPreview();
+  }
+
+  function updateUiuxPreview(){
+    const u = data.uiux || DEFAULT_UIUX;
+    const c = u.colors || DEFAULT_UIUX.colors;
+    document.getElementById('ux-preview-heading').style.fontFamily = u.headingFont;
+    document.getElementById('ux-preview-body').style.fontFamily = u.bodyFont;
+    document.getElementById('ux-preview-heading').style.color = c.ink;
+    document.getElementById('ux-preview-body').style.color = c.inkSoft;
+  }
+
+  function bindUiux(){
+    ['body','heading','mono'].forEach(type => {
+      document.getElementById('ux-' + type + '-font').addEventListener('change', e => {
+        data.uiux[type + 'Font'] = e.target.value;
+        updateUiuxPreview();
+      });
+    });
+
+    Object.keys(DEFAULT_UIUX.colors).forEach(key => {
+      const picker = document.getElementById('ux-' + key);
+      const text = document.getElementById('ux-' + key + '-text');
+      picker.addEventListener('input', e => {
+        data.uiux.colors[key] = e.target.value;
+        text.value = e.target.value;
+        updateUiuxPreview();
+      });
+      text.addEventListener('input', e => {
+        const value = e.target.value.trim();
+        if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+          data.uiux.colors[key] = value;
+          picker.value = value;
+          updateUiuxPreview();
+        }
+      });
+    });
+  }
+  bindUiux();
+
   // ---------- render form from `data` ----------
   function renderForm(){
+    renderUiux();
     document.getElementById('f-roletitle').value = data.roleTitle || '';
     document.getElementById('f-kicker').value = data.hero?.kicker || '';
     document.getElementById('f-headline').value = data.hero?.headline || '';
@@ -591,6 +807,14 @@
     data.contact.linkedin = document.getElementById('f-linkedin').value;
     data.contact.location = document.getElementById('f-location').value;
   }
+
+  // ---------- sidebar navigation ----------
+  document.querySelectorAll('.admin-sidebar a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelectorAll('.admin-sidebar a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
 
   // ---------- save / reload ----------
   document.getElementById('save-btn').onclick = async () => {
