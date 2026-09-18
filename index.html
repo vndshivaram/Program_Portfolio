@@ -34,13 +34,13 @@
   .sb-bottom a{color:var(--paper);border-bottom:1px solid var(--line);}
   .sb-bottom a:hover{border-bottom-color:var(--gold);color:var(--gold);}
   main{padding:0;}
-  section{padding:88px 64px;border-bottom:1px solid var(--line-dark);max-width:900px;}
+  section{padding:32px 32px;border-bottom:1px solid var(--line-dark);max-width:none;}
   @media (max-width:920px){section{padding:56px 24px;}}
   section:last-of-type{border-bottom:none;}
   .kicker{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--teal);margin-bottom:14px;}
   #hero{padding-top:64px;}
-  .hero-head{font-size:clamp(2.1rem,4vw,3.2rem);line-height:1.12;max-width:16ch;margin-bottom:22px;}
-  .hero-sub{max-width:62ch;color:var(--ink-soft);font-size:1.05rem;margin-bottom:44px;}
+  .hero-head{font-size:clamp(2.1rem,4vw,3.2rem);line-height:1.12;max-width:none;margin-bottom:22px;}
+  .hero-sub{max-width:none;color:var(--ink-soft);font-size:1.05rem;margin-bottom:25px;text-align:justify;}
   .ledger{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-dark);border-left:1px solid var(--line-dark);}
   @media (max-width:700px){.ledger{grid-template-columns:repeat(2,1fr);}}
   .ledger-cell{border-right:1px solid var(--line-dark);border-bottom:1px solid var(--line-dark);padding:20px 18px;}
@@ -124,26 +124,26 @@
     </section>
 
     <section id="experience">
-      <div class="kicker">Experience</div>
+     
       <h2 class="sec-head">Experience</h2>
-      <p class="sec-intro">Career history, most recent first.</p>
+     
       <div id="roles-container"></div>
     </section>
 
     <section id="projects">
-      <div class="kicker">Selected work</div>
+     
       <h2 class="sec-head">Projects</h2>
       <div class="projects" id="projects-container"></div>
     </section>
 
     <section id="skills">
-      <div class="kicker">Toolkit</div>
+     
       <h2 class="sec-head">Skills</h2>
       <div class="skill-grid" id="skills-container"></div>
     </section>
 
     <section id="education">
-      <div class="kicker">Background</div>
+      
       <h2 class="sec-head">Education &amp; Certifications</h2>
       <div class="ed-grid">
         <div id="education-container"></div>
